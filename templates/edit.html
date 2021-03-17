@@ -1,0 +1,59 @@
+{{define "editgp"}}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Showing <u>{{.Gpname}}</u> GP</h1>
+    {{range .Rules}}
+<hr>
+<div id="{{.Name}}"><hr>
+<p>GP's name: <b>{{.DisplayName}}</b></p>
+<p>Class: {{.Class}}</p>
+<p>Category: {{.Category}}</p>
+<p>Supported on: {{.SupportedOn}}</p>
+<p>Description: {{.ExplainText}}</p>
+<div><br>
+        {{range .Values}}
+            {{if and (eq .Dublicate 1) (ne .Value "") }}
+            <input hidden id="{{.ValueName}}" value="{{.Value}}">
+            <input hidden id="{{.ValueName}}-DN" value="{{.DisplayName}}">
+            <label></label>
+            <select id="values-{{.ValueName}}"></select>
+            <script>
+                var vals = document.getElementById("{{.ValueName}}").value;
+                var dnames = document.getElementById("{{.ValueName}}-DN").value;
+                var valsArr = vals.split("|");
+                var dnmArr = dnames.split("|");
+                var select = document.getElementById("values-{{.ValueName}}");
+
+                for (let [i, val] of valsArr.entries()) {
+                    var option = document.createElement("option");
+                    if (val == null || val === "") {
+                        val = dnmArr[i];
+                    }
+                    option.value = val;
+                    option.text = dnmArr[i];
+                    select.appendChild(option);
+                }
+            </script>
+            {{ else }}
+            <p id="dname">{{.DisplayName}}</p>
+            <p id="value">{{.Value}}</p>
+            <p id="value">{{.Type}}</p>
+            {{if eq .Type "REG_SZ"}}
+            <input type="text" id="{{.ValueName}}_text" inputmode="text" placeholder="{{.ValueName}}" />
+            {{end}}
+            {{if eq .Type "REG_DWORD"}}
+            <input type="text" id="{{.ValueName}}_text" inputmode="numeric" placeholder="{{.ValueName}}" />
+            {{end}}
+            {{end}}
+        {{end}}
+    {{end}}
+</div>
+</div>
+</body>
+</html>
+
+{{end}}
