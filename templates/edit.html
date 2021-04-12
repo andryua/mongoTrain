@@ -3,6 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" />
+    <script>
+        /*
+        var vals = document.getElementById("dublval").value;
+        console.log(vals)
+        var dnames = document.getElementById("dubldn").value;
+        var valsArr = vals.split("|");
+        var dnmArr = dnames.split("|");
+        var select = document.getElementById("values");
+
+        for (let [i, val] of valsArr.entries()) {
+            var option = document.createElement("option");
+            if (val == null || val === "") {
+                val = dnmArr[i];
+            }
+            option.value = val;
+            option.text = dnmArr[i];
+            select.appendChild(option);
+        }
+        */
+    </script>
 </head>
 <body>
 <h1>Showing <u>{{.Gpname}}</u> GP</h1>
@@ -17,31 +38,23 @@
 <div><br>
         {{range .Values}}
             {{if and (eq .Dublicate 1) (ne .Value "") }}
-            <input hidden id="{{.ValueName}}" value="{{.Value}}">
-            <input hidden id="{{.ValueName}}-DN" value="{{.DisplayName}}">
+            <input hidden id="dublval-{{.ValueName}}" value="{{.Value}}">
+            <input hidden id="dubldn-{{.ValueName}}" value="{{.DisplayName}}">
             <label></label>
-            <select id="values-{{.ValueName}}"></select>
-            <script>
-                var vals = document.getElementById("{{.ValueName}}").value;
-                var dnames = document.getElementById("{{.ValueName}}-DN").value;
-                var valsArr = vals.split("|");
-                var dnmArr = dnames.split("|");
-                var select = document.getElementById("values-{{.ValueName}}");
-
-                for (let [i, val] of valsArr.entries()) {
-                    var option = document.createElement("option");
-                    if (val == null || val === "") {
-                        val = dnmArr[i];
-                    }
-                    option.value = val;
-                    option.text = dnmArr[i];
-                    select.appendChild(option);
-                }
-            </script>
+            <select id="gpvalues-{{.ValueName}}"></select>
+    <script>
+        $(document).ready(function() {
+            var vals = $("#dublval-{{.ValueName}}").val().split("|");
+            var dnames = $("#dubldn-{{.ValueName}}").val().split("|");
+            for (let [i, val] of vals.entries()) {
+                $("#gpvalues-{{.ValueName}}").append(new Option(dnames[i], val));
+            }
+        })
+    </script>
             {{ else }}
             <p id="dname">{{.DisplayName}}</p>
             <p id="value">{{.Value}}</p>
-            <p id="value">{{.Type}}</p>
+            <p id="type">{{.Type}}</p>
             {{if eq .Type "REG_SZ"}}
             <input type="text" id="{{.ValueName}}_text" inputmode="text" placeholder="{{.ValueName}}" />
             {{end}}
@@ -50,8 +63,8 @@
             {{end}}
             {{end}}
         {{end}}
-    {{end}}
 </div>
+    {{end}}
 </div>
 </body>
 </html>

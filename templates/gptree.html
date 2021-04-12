@@ -1,0 +1,81 @@
+{{define "gptree"}}
+<html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <title>Test</title>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+    <link href="/assets/fancytree/src/skin-win8/ui.fancytree.css" rel="stylesheet">
+    <script src="/assets/fancytree/src/jquery.fancytree.js"></script>
+
+    <!-- Start_Exclude: This block is not part of the sample code -->
+    <link href="/assets/fancytree/lib/prettify.css" rel="stylesheet">
+    <script src="/assets/fancytree/lib/prettify.js"></script>
+    <link href="/assets/fancytree/demo/sample.css" rel="stylesheet">
+    <script src="/assets/fancytree/demo/sample.js"></script>
+    <!-- End_Exclude -->
+
+    <style type="text/css">
+    </style>
+
+    <script type="text/javascript">
+        $(function(){
+            $("#tree3").fancytree({
+                checkbox: true,
+                selectMode: 3,
+                source: {
+                    url: "/admjson",
+                    cache: false,
+                },
+                init: function(event, data) {
+                    // Set key from first part of title (just for this demo output)
+                    data.tree.visit(function(n) {
+                        n.key = n.title.split(" ")[0];
+                        n.expanded = false;
+                    });
+                },
+                lazyLoad: function(event, ctx) {
+                    ctx.result = {url: "ajax-sub2.json", debugDelay: 1000};
+                },
+                loadChildren: function(event, ctx) {
+                    ctx.node.fixSelection3AfterClick();
+                },
+                select: function(event, data) {
+                    // Get a list of all selected nodes, and convert to a key array:
+                    var selKeys = $.map(data.tree.getSelectedNodes(), function(node){
+                        return node.data.id;
+                    });
+                    //$("#ids").text(selKeys.join(","));
+                    $("#ids").val(selKeys.join(","));
+
+                    // Get a list of all selected TOP nodes
+                    var selRootNodes = data.tree.getSelectedNodes(true);
+                    // ... and convert to a key array:
+                    var selRootKeys = $.map(selRootNodes, function(node){
+                        return node.key;
+                    });
+                    $("#echoSelectionRootKeys3").text(selRootKeys.join(", "));
+                    // $("#echoSelectionRoots3").text(selRootNodes.join(", "));
+                },
+                // The following options are only required, if we have more than one tree on one page:
+                cookieId: "fancytree-Cb3",
+                idPrefix: "fancytree-Cb3-"
+            });
+
+        });
+    </script>
+</head>
+
+<body class="example">
+
+<div id="tree3">Add rules for {{.Name}}</div>
+<form id="selectedid" method="post" action="/sendids">
+<input type="text" id="ids" name="ids" hidden>
+<input type="text" id="gpname" name="gpname" value="{{.Name}}" hidden>
+<input type="submit" value="send" />
+</form>
+</body>
+</html>
+{{end}}

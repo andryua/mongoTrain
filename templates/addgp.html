@@ -1,0 +1,25 @@
+{{define "addgp"}}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add GP</title>
+</head>
+<body>
+<form name="addgp" method="post" action="/addgp">
+    <label for="gpname">Enter a name of GP</label>
+    <input type="text" name="gpname" id="gpname">
+    <label for="gptype">Choose a pet:</label>
+    <label for="gpname">Enter a name of GP</label>
+    <input type="text" name="gpinfo" id="gpinfo">
+    <select name="gptype" id="gptype">
+        <option value="">--Please choose an option--</option>
+        <option value="main">main</option>
+        <option value="default">default</option>
+        <option value="users">users</option>
+    </select>
+
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>
+{{end}}
