@@ -26,44 +26,71 @@
     </script>
 </head>
 <body>
+<a href="/">Main</a>
+<a href="/add?name={{.Gpname}}">Add</a>
 <h1>Showing <u>{{.Gpname}}</u> GP</h1>
-    {{range .Rules}}
+{{range .Rules}}
 <hr>
 <div id="{{.Name}}"><hr>
-<p>GP's name: <b>{{.DisplayName}}</b></p>
-<p>Class: {{.Class}}</p>
-<p>Category: {{.Category}}</p>
-<p>Supported on: {{.SupportedOn}}</p>
-<p>Description: {{.ExplainText}}</p>
-<div><br>
+    <p>GP's name: <b>{{.DisplayName}}</b></p>
+    <p>Class: {{.Class}}</p>
+    <p>Category: {{.Category}}</p>
+    <p>Supported on: {{.SupportedOn}}</p>
+    <p>Description: {{.ExplainText}}</p>
+    <div><br>
         {{range .Values}}
-            {{if and (eq .Dublicate 1) (ne .Value "") }}
-            <input hidden id="dublval-{{.ValueName}}" value="{{.Value}}">
-            <input hidden id="dubldn-{{.ValueName}}" value="{{.DisplayName}}">
-            <label></label>
-            <select id="gpvalues-{{.ValueName}}"></select>
-    <script>
-        $(document).ready(function() {
-            var vals = $("#dublval-{{.ValueName}}").val().split("|");
-            var dnames = $("#dubldn-{{.ValueName}}").val().split("|");
-            for (let [i, val] of vals.entries()) {
-                $("#gpvalues-{{.ValueName}}").append(new Option(dnames[i], val));
-            }
-        })
-    </script>
-            {{ else }}
-            <p id="dname">{{.DisplayName}}</p>
-            <p id="value">{{.Value}}</p>
-            <p id="type">{{.Type}}</p>
-            {{if eq .Type "REG_SZ"}}
-            <input type="text" id="{{.ValueName}}_text" inputmode="text" placeholder="{{.ValueName}}" />
-            {{end}}
-            {{if eq .Type "REG_DWORD"}}
-            <input type="text" id="{{.ValueName}}_text" inputmode="numeric" placeholder="{{.ValueName}}" />
-            {{end}}
-            {{end}}
+        {{if ne .DisabledValue ""}}
+        <input type="radio" id="enable" name="enable-disable-{{.ValueName}}" value="{{.EnabledValue}}">
+        <label for="enable">Enable</label><br>
+        <input type="radio" id="disable" name="enable-disable-{{.ValueName}}" value="{{.DisabledValue}}">
+        <label for="disable">Disable</label><br>
         {{end}}
-</div>
+        {{if ne .TrueValue ""}}
+        <input type="radio" id="true" name="true-false-{{.ValueName}}" value="{{.TrueValue}}">
+        <label for="true">True</label><br>
+        <input type="radio" id="false" name="true-false-{{.ValueName}}" value="{{.FalseValue}}">
+        <label for="false">False</label><br>
+        {{end}}
+        {{if and (eq .Dublicate 1) (ne .Value "") }}
+        <input hidden id="dublval-{{.ValueName}}" value="{{.Value}}">
+        <input hidden id="dubldn-{{.ValueName}}" value="{{.DisplayName}}">
+        <label></label>
+        <select id="gpvalues-{{.ValueName}}"></select>
+        <script>
+            $(document).ready(function() {
+                var vals = $("#dublval-{{.ValueName}}").val().split("|");
+                var dnames = $("#dubldn-{{.ValueName}}").val().split("|");
+                for (let [i, val] of vals.entries()) {
+                    $("#gpvalues-{{.ValueName}}").append(new Option(dnames[i], val));
+                }
+            })
+        </script>
+        {{ else }}
+        <p id="dname">{{.DisplayName}}</p>
+        <p id="value">{{.Value}}</p>
+        <p id="type">{{.Type}}</p>
+        {{if eq .ValueName "manual "}}
+        <input type="text" id="manualv_text" inputmode="text" placeholder="Enter value name" />
+        <input type="text" id="manualvn_text" inputmode="text" placeholder="Enter value" />
+        {{else}}
+        {{if eq .Type "REG_SZ"}}
+        <input type="text" id="{{.ValueName}}_text" inputmode="text" placeholder="{{.ValueName}}" />
+        {{end}}
+        {{if and (eq .Type "REG_DWORD") (eq .DisabledValue "")}}
+        <input type="number" id="{{.ValueName}}_number" inputmode="numeric" placeholder="{{.ValueName}}" />
+        {{end}}
+        {{if eq .Type "REG_MULTISZ"}}
+        <textarea rows = "5" cols = "60" name = "{{.ValueName}}_multiline" id="{{.ValueName}}_multiline">
+                {{.ValueName}}
+            </textarea>
+        {{end}}
+        {{if eq .Type "REG_QWORD"}}
+        <input type="text" id="{{.ValueName}}_bin" inputmode="text" placeholder="{{.ValueName}}" />
+        {{end}}
+        {{end}}
+        {{end}}
+        {{end}}
+    </div>
     {{end}}
 </div>
 </body>
