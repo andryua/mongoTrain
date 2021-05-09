@@ -1,26 +1,65 @@
 {{define "index"}}
-<html lang="en">
+<html lang="uk-UA">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="/assets/materialize/css/materialize.min.css"  media="screen,projection"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/assets/materialize/js/materialize.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.collapsible').collapsible();
+            $('.dropdown-trigger').dropdown();
+            $('.modal').modal();
+            $('.datepicker').datepicker();
+            $('select').formSelect();
+            M.updateTextFields();
+            $('input#input_text, textarea#textarea2').characterCounter();
+        });
+    </script>
 </head>
-<body>
-<a href="/showaddgp">Add new gp</a>
-<table>
-    <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Dependency</th>
-    </tr>
+<body class="container">
+<nav>
+    <div class="nav-wrapper teal row">
+        <div class="col s10">
+            <a href="/" class="breadcrumb brand-logo"><i class="large material-icons">people</i></a>
+        </div>
+        <a class="waves-effect waves-light modal-trigger openModal1 s1" href="#modal1"><i class="large material-icons">add_circle_outline</i></a>
+        <script>
+            $('.openModal1').on('click',function(){
+                $('.modal-content').load('/showaddgp',function(){
+                    $('#modal1').modal(open);
+                });
+            });
+        </script>
+    </div>
+</nav>
+
+<!-- Modal Structure -->
+<div id="modal1" class="modal responsive">
+    <!-- style="min-height: 600px;" -->
+    <div class="modal-content">
+    </div>
+</div>
+
+<table class="highlight centered responsive-table">
+    <thead>
+        <th>Ім'я</th>
+        <th>Тип</th>
+        <th>Опис</th>
+        <th>Дії з політикою</th>
+    </thead>
+    <tbody>
     {{range .GPList}}
     <tr>
-        <td><a href="/add?name={{.Name}}">{{.Name}}</a></td>
+        <td><a href="/edit?name={{.Name}}">{{.Name}}</a></td>
         <td>{{.Type}}</td>
         <td>{{.Description}}</td>
         <td>{{.Dependency}}</td>
     </tr>
     {{end}}
+    </tbody>
 </table>
 </body>
 </html>

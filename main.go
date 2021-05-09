@@ -26,9 +26,9 @@ type ListGP struct {
 func connectDB() mgo.Session {
 	MongoDBHosts := "127.0.0.1"
 	dialInfo := &mgo.DialInfo{
-		Addrs: []string{MongoDBHosts},
-		//Username: "admin",
-		//Password: "password",
+		Addrs:    []string{MongoDBHosts},
+		Username: "admin",
+		Password: "password",
 		Timeout:  60 * time.Second,
 		Database: "admin",
 	}
