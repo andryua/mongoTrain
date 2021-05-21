@@ -1,69 +1,85 @@
 {{define "editgp"}}
-<html lang="en">
+<html lang="uk-UA">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Title</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link type="text/css" rel="stylesheet" href="/assets/materialize/css/materialize.min.css"  media="screen,projection"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript" src="/assets/materialize/js/materialize.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link type="text/css" rel="stylesheet" href="/assets/materialize/css/materialize.min.css"  media="screen,projection"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript" src="/assets/materialize/js/materialize.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.collapsible').collapsible();
-            $('.dropdown-trigger').dropdown();
-            $('.modal').modal();
-            $('.datepicker').datepicker();
-            $('select').formSelect();
-            M.updateTextFields();
-            $('input#input_text, textarea#textarea2').characterCounter();
-        });
-    </script>
+    <script src="/assets/jquery-3.6.0.min.js"></script>
+    <link href="/assets/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <link href="/assets/fontawesome/css/all.css" rel="stylesheet">
 </head>
 <body class="container">
-<nav>
-    <div class="nav-wrapper teal row">
-        <div class="col s10">
-            <a href="/" class="breadcrumb"><i class="large material-icons">people</i></a>
-            <a href="/edit?name={{.Gpname}}" class="breadcrumb">Політика <b>{{.Gpname}}</b></a>
-        </div>
-        <div clas="col s2">
-            <a href="/add?name={{.Gpname}}"><i class="large material-icons">add_box</i></a>
-        </div>
-    </div>
+<nav style="--bs-breadcrumb-divider: '>'; background-color: #75AF26;" aria-label="breadcrumb" class="align-self-center d-flex p-2">
+    <ol class="breadcrumb col-10 navbar-brand">
+        <li class="breadcrumb-item" style="padding-left: 0rem;"><a href="/" class="navbar-brand"><i class="fas fa-users"></i></a></li>
+        <li class="breadcrumb-item active" style="padding-left: 0rem;" aria-current="page">{{.Gpname}}</li>
+    </ol>
+    <a href="/add?name={{.Gpname}}" class="align-self-center"><i class="fas fa-plus-circle"></i></a>
 </nav>
+
+<div class="d-flex align-items-start">
+    <div class="nav flex-column nav-pills me-3 col-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <!--<div class="" style="overflow-y: auto; height: 90vh;">-->
+        {{range .Rules}}
+        <button class="nav-link text-start overflow-scroll" id="v-pills-{{.Name}}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-{{.Name}}" type="button" role="tab" aria-controls="v-pills-{{.Name}}" aria-selected="true">
+            {{.DisplayName}}</button>
+        {{end}}
+    </div>
+    <div class="tab-content" id="v-pills-tabContent">
 {{range .Rules}}
-<hr>
-<div id="{{.Name}}"><hr>
+        <div class="tab-pane fade show" id="v-pills-{{.Name}}" role="tabpanel" aria-labelledby="v-pills-{{.Name}}-tab">
     <p>GP's name: <b>{{.DisplayName}}</b></p>
     <p>Class: {{.Class}}</p>
     <p>Category: {{.Category}}</p>
     <p>Supported on: {{.SupportedOn}}</p>
-    <p>Description: {{.ExplainText}}</p>
+    <p>
+    <button class="btn btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+        Опис
+    </button>
+    </p>
+    <div class="collapse" id="collapseExample">
+        <div class="card card-body">
+            {{.ExplainText}}
+        </div>
+    </div>
     <div><br>
         {{range .Values}}
         {{if ne .DisabledValue ""}}
-        <input type="radio" id="enable" name="enable-disable-{{.ValueName}}" value="{{.EnabledValue}}">
-        <label for="enable">Enable</label><br>
-        <input type="radio" id="disable" name="enable-disable-{{.ValueName}}" value="{{.DisabledValue}}">
-        <label for="disable">Disable</label><br>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="enable-disable-{{.ValueName}}" value="{{.EnabledValue}}" id="enable-disable-{{.ValueName}}">
+            <label class="form-check-label" for="enable-disable-{{.ValueName}}">
+                Enabled
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="enable-disable-{{.ValueName}}" value="{{.DisabledValue}}" id="enable-disable-{{.ValueName}}">
+            <label class="form-check-label" for="enable-disable-{{.ValueName}}">
+                Disabled
+            </label>
+        </div>
         {{end}}
         {{if ne .TrueValue ""}}
-        <input type="radio" id="true" name="true-false-{{.ValueName}}" value="{{.TrueValue}}">
-        <label for="true">True</label><br>
-        <input type="radio" id="false" name="true-false-{{.ValueName}}" value="{{.FalseValue}}">
-        <label for="false">False</label><br>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="true-false-{{.ValueName}}" value="{{.TrueValue}}" id="true-false-{{.ValueName}}">
+            <label class="form-check-label" for="true-false-{{.ValueName}}">
+                True
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="radio" name="true-false-{{.ValueName}}" value="{{.FalseValue}}" id="true-false-{{.ValueName}}">
+            <label class="form-check-label" for="true-false-{{.ValueName}}">
+                False
+            </label>
+        </div>
         {{end}}
         {{if and (eq .Dublicate 1) (ne .Value "") }}
         <input hidden id="dublval-{{.ValueName}}" value="{{.Value}}">
         <input hidden id="dubldn-{{.ValueName}}" value="{{.DisplayName}}">
-        <label></label>
-        <div class="input-field col s8">
-            <select id="gpvalues-{{.ValueName}}"></select>
+        <div>
+            <select id="gpvalues-{{.ValueName}}" class="form-select" aria-label="Default select example">
+                <option value="" disabled="" selected="">Виберіть значення</option>
+            </select>
         </div>
         <script>
             $(document).ready(function() {
@@ -76,11 +92,13 @@
         </script>
         {{ else }}
         <p id="dname">{{.DisplayName}}</p>
-        <p id="value">{{.Value}}</p>
-        <p id="type">{{.Type}}</p>
         {{if eq .ValueName "manual "}}
-        <input type="text" id="manualv_text" inputmode="text" placeholder="Enter value name" />
-        <input type="text" id="manualvn_text" inputmode="text" placeholder="Enter value" />
+        <div class="input-group">
+            <span class="input-group-text">Ім'я, значення і опис</span>
+            <input type="text" aria-label="ValueName" class="form-control" id="manualv_text" inputmode="text" placeholder="Ім'я значення">
+            <input type="text" aria-label="Value" class="form-control" id="manualvn_text" inputmode="text" placeholder="Значення">
+            <input type="text" aria-label="Info" class="form-control" id="manuali_text" inputmode="text" placeholder="Опис">
+        </div>
         {{else}}
         {{if eq .Type "REG_SZ"}}
         <input type="text" id="{{.ValueName}}_text" inputmode="text" placeholder="{{.ValueName}}" />
@@ -100,8 +118,10 @@
         {{end}}
         {{end}}
     </div>
+        </div>
     {{end}}
-</div>
+
+    </div>
 </body>
 </html>
 

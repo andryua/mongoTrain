@@ -2,53 +2,48 @@
 <html lang="uk-UA">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Title</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link type="text/css" rel="stylesheet" href="/assets/materialize/css/materialize.min.css"  media="screen,projection"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript" src="/assets/materialize/js/materialize.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.collapsible').collapsible();
-            $('.dropdown-trigger').dropdown();
-            $('.modal').modal();
-            $('.datepicker').datepicker();
-            $('select').formSelect();
-            M.updateTextFields();
-            $('input#input_text, textarea#textarea2').characterCounter();
-        });
-    </script>
+    <script src="/assets/jquery-3.6.0.min.js"></script>
+    <link href="/assets/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <link href="/assets/fontawesome/css/all.css" rel="stylesheet">
 </head>
 <body class="container">
-<nav>
-    <div class="nav-wrapper teal row">
-        <div class="col s10">
-            <a href="/" class="breadcrumb brand-logo"><i class="large material-icons">people</i></a>
-        </div>
-        <a class="waves-effect waves-light modal-trigger openModal1 s1" href="#modal1"><i class="large material-icons">add_circle_outline</i></a>
-        <script>
-            $('.openModal1').on('click',function(){
-                $('.modal-content').load('/showaddgp',function(){
-                    $('#modal1').modal(open);
-                });
-            });
-        </script>
-    </div>
+<nav style="--bs-breadcrumb-divider: '>'; background-color: #75AF26;" aria-label="breadcrumb" class="d-flex p-2">
+    <ol class="breadcrumb col-10 navbar-brand">
+        <li class="breadcrumb-item active" style="padding-left: 0rem;" aria-current="page"><i class="fas fa-users"></i></li>
+    </ol>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-link modal1" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        <i class="fas fa-plus-circle"></i>
+    </button>
 </nav>
 
-<!-- Modal Structure -->
-<div id="modal1" class="modal responsive">
-    <!-- style="min-height: 600px;" -->
-    <div class="modal-content">
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
     </div>
 </div>
 
-<table class="highlight centered responsive-table">
-    <thead>
-        <th>Ім'я</th>
-        <th>Тип</th>
-        <th>Опис</th>
-        <th>Дії з політикою</th>
+<script>
+    $('.modal1').on('click',function(){
+        $('.modal-content').load('/showaddgp',function(){
+            $('#exampleModal').modal({show:true});
+        });
+    });
+</script>
+
+<table class="table table-striped text-center">
+    <thead class="table-dark">
+        <th class="col-3">Ім'я</th>
+        <th class="col-1">Тип</th>
+        <th class="col-5">Опис</th>
+        <th class="col-3">Дії з політикою</th>
     </thead>
     <tbody>
     {{range .GPList}}
@@ -61,6 +56,7 @@
     {{end}}
     </tbody>
 </table>
+
 </body>
 </html>
 {{end}}

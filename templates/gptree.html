@@ -1,15 +1,16 @@
 {{define "gptree"}}
 <html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Title</title>
+    <script src="/assets/jquery-3.6.0.min.js"></script>
+    <link href="/assets/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <link href="/assets/fontawesome/css/all.css" rel="stylesheet">
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
     <title>Test</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link type="text/css" rel="stylesheet" href="/assets/materialize/css/materialize.min.css"  media="screen,projection"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript" src="/assets/materialize/js/materialize.min.js"></script>
-
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="/assets/jquery-ui/jquery-ui.min.js"></script>
 
     <link href="/assets/fancytree/src/skin-win8/ui.fancytree.css" rel="stylesheet">
     <script src="/assets/fancytree/src/jquery.fancytree.js"></script>
@@ -71,11 +72,15 @@
         });
     </script>
 </head>
-
-<body class="example">
-<a href="/">Main</a>
-<a href="/edit?name={{.Name}}">Go to GP</a>
-<div id="tree3">Add rules for {{.Name}}</div>
+<body class="container">
+<nav style="--bs-breadcrumb-divider: '>'; background-color: #75AF26;" aria-label="breadcrumb" class="d-flex p-2">
+    <ol class="breadcrumb col-10 navbar-brand">
+        <li class="breadcrumb-item" style="padding-left: 0rem;"><a href="/" class="navbar-brand"><i class="fas fa-users"></i></a></li>
+        <li class="breadcrumb-item" style="padding-left: 0rem;"><a href="/edit?name={{.Name}}" class="navbar-brand">{{.Name}}</a></li>
+        <li class="breadcrumb-item active" style="padding-left: 0rem;" aria-current="page"><i class="fas fa-sitemap"></i></li>
+    </ol>
+</nav>
+<div id="tree3" style="overflow-y: scroll; height: 75vh; width: 40vw;"></div>
 <form id="selectedid" method="post" action="/sendids">
 <input type="text" id="ids" name="ids" hidden>
 <input type="text" id="gpname" name="gpname" value="{{.Name}}" hidden>
