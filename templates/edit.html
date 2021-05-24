@@ -8,6 +8,8 @@
     <link href="/assets/bootstrap/css/bootstrap.css" rel="stylesheet">
     <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
     <link href="/assets/fontawesome/css/all.css" rel="stylesheet">
+    <script src="/assets/gpo.js" type="text/javascript"></script>
+
 </head>
 <body class="container">
 <nav style="--bs-breadcrumb-divider: '>'; background-color: #75AF26;" aria-label="breadcrumb" class="align-self-center d-flex p-2">
@@ -17,19 +19,19 @@
     </ol>
     <a href="/add?name={{.Gpname}}" class="align-self-center"><i class="fas fa-plus-circle"></i></a>
 </nav>
-
 <div class="d-flex align-items-start">
-    <div class="nav flex-column nav-pills me-3 col-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <!--<div class="" style="overflow-y: auto; height: 90vh;">-->
+    <div class="col-3" style="overflow-y: auto; height: 85vh;">
+    <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
         {{range .Rules}}
-        <button class="nav-link text-start overflow-scroll" id="v-pills-{{.Name}}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-{{.Name}}" type="button" role="tab" aria-controls="v-pills-{{.Name}}" aria-selected="true">
+        <button class="nav-link text-start" id="v-pills-{{.Name}}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-{{.Name}}" type="button" role="tab" aria-controls="v-pills-{{.Name}}" aria-selected="true">
             {{.DisplayName}}</button>
         {{end}}
     </div>
+</div>
     <div class="tab-content" id="v-pills-tabContent">
 {{range .Rules}}
         <div class="tab-pane fade show" id="v-pills-{{.Name}}" role="tabpanel" aria-labelledby="v-pills-{{.Name}}-tab">
-    <p>GP's name: <b>{{.DisplayName}}</b></p>
+            <p><h2>{{.DisplayName}}</h2></p>
     <p>Class: {{.Class}}</p>
     <p>Category: {{.Category}}</p>
     <p>Supported on: {{.SupportedOn}}</p>
@@ -93,12 +95,36 @@
         {{ else }}
         <p id="dname">{{.DisplayName}}</p>
         {{if eq .ValueName "manual "}}
-        <div class="input-group">
+        <!--<div class="input-group">
             <span class="input-group-text">Ім'я, значення і опис</span>
             <input type="text" aria-label="ValueName" class="form-control" id="manualv_text" inputmode="text" placeholder="Ім'я значення">
             <input type="text" aria-label="Value" class="form-control" id="manualvn_text" inputmode="text" placeholder="Значення">
             <input type="text" aria-label="Info" class="form-control" id="manuali_text" inputmode="text" placeholder="Опис">
-        </div>
+        </div>-->
+        <table id="myTable" class="table" data-toggle="table" data-mobile-responsive="true" data-pagination="true" data-height="460">
+
+            <thead>
+            <tr>
+                <th>ім'я</th>
+                <th>значення</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <input id="ex2" type="text">
+                </td>
+                <td>
+                    <input id="ex3" type="text">
+                </td>
+                <td>
+                    <button class="btn btn-outline-success" id="addrow" class="addnew">+</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
         {{else}}
         {{if eq .Type "REG_SZ"}}
         <input type="text" id="{{.ValueName}}_text" inputmode="text" placeholder="{{.ValueName}}" />
@@ -120,7 +146,7 @@
     </div>
         </div>
     {{end}}
-
+    </div>
     </div>
 </body>
 </html>
