@@ -8,16 +8,26 @@
     <link href="/assets/bootstrap/css/bootstrap.css" rel="stylesheet">
     <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
     <link href="/assets/fontawesome/css/all.css" rel="stylesheet">
+    <style>
+        .breadcrumb-item.active {
+            color: #000000;
+        }
+        body {
+           background-color: #edeeef;
+        }
+    </style>
 </head>
 <body class="container">
 <nav style="--bs-breadcrumb-divider: '>'; background-color: #75AF26;" aria-label="breadcrumb" class="d-flex p-2">
-    <ol class="breadcrumb col-10 navbar-brand">
+    <ol class="breadcrumb col-11 navbar-brand">
         <li class="breadcrumb-item active" style="padding-left: 0rem;" aria-current="page"><i class="fas fa-users"></i></li>
     </ol>
     <!-- Button trigger modal -->
+    <div class="btn-group-sm text-end" role="group">
     <button type="button" class="btn btn-link modal1" data-bs-toggle="modal" data-bs-target="#exampleModal">
         <i class="fas fa-plus-circle"></i>
     </button>
+    </div>
 </nav>
 
 
@@ -51,7 +61,11 @@
         <td><a href="/edit?name={{.Name}}">{{.Name}}</a></td>
         <td>{{.Type}}</td>
         <td>{{.Description}}</td>
-        <td>{{.Dependency}}</td>
+        <td>
+            <button class="btn btn-link btn-sm" type="button"><i class="fa fa-cloud"></i></button>
+            <button class="btn btn-link btn-sm" type="button"><i class="fa fa-trash"></i></button>
+            <button class="btn btn-link btn-sm" type="button"><i class="fa fa-download"></i></button>
+        </td>
     </tr>
     {{end}}
     </tbody>

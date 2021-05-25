@@ -1,27 +1,33 @@
 {{define "gptree"}}
 <html xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Title</title>
-    <script src="/assets/jquery-3.6.0.min.js"></script>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <!--<script src="/assets/jquery-3.6.0.min.js"></script>-->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link href="/assets/bootstrap/css/bootstrap.css" rel="stylesheet">
     <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
     <link href="/assets/fontawesome/css/all.css" rel="stylesheet">
-    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-    <title>Test</title>
     <script src="/assets/jquery-ui/jquery-ui.min.js"></script>
-    <script src="/assets/fancytree/lib/jquery.js"></script>
-    <script src="/assets/fancytree/lib/jquery-ui.custom.js"></script>
-    <!--<link href="/assets/fancytree/src/skin-xp/ui.fancytree.css" rel="stylesheet">-->
     <link href="/assets/fancytree/src/skin-lion/ui.fancytree.css" rel="stylesheet">
     <script src="/assets/fancytree/src/jquery.fancytree.js"></script>
     <script src="/assets/fancytree/src/jquery.fancytree.filter.js"></script>
-    <!-- Start_Exclude: This block is not part of the sample code -->
     <link href="/assets/fancytree/lib/prettify.css" rel="stylesheet">
     <script src="/assets/fancytree/lib/prettify.js"></script>
-    <!-- End_Exclude -->
-    <script src="/assets/gpo.js" type="text/javascript"></script>
+    <script src="/assets/fancytree/src/jquery-ui-dependencies/jquery.fancytree.ui-deps.js"></script>
+    <script src="/assets/gpo.js"></script>
+    <style>
+        .breadcrumb-item.active {
+            color: #000000;
+        }
+        body {
+            background-color: #edeeef;
+        }
+        ul.fancytree-container {
+            background-color: #edeeef;
+            border: 0px;
+        }
+    </style>
 </head>
 <body class="container">
 <nav style="--bs-breadcrumb-divider: '>'; background-color: #75AF26;" aria-label="breadcrumb" class="d-flex p-2">
@@ -38,71 +44,44 @@
             <div class="input-group ">
                 <input type="text" class="form-control fas fa-search" id="search" placeholder="&#xF002;" name="search" autocomplete="off">
                 <div class="input-group-append">
-                    <button type="button" id="btnResetSearch" class="btn btn-dark my-2 my-sm-0"><i class="fas fa-times"></i></button>
+                    <button type="button" id="btnResetSearch" class="btn btn-link my-2 my-sm-0"><i class="fas fa-times"></i></button>
+                    <span id="matches"></span>
                 </div>
             </div>
-            <div id="tree" style="overflow-y:auto;max-height:75vh;max-width:45vw;">
+            <div id="tree" style="overflow-y:auto;max-height:75vh;max-width:35vw;">
             </div>
-            <div id="temp"></div>
             <form id="selectedid" method="post" action="/sendids">
                 <input type="text" id="ids" name="ids" hidden>
                 <input type="text" id="gpname" name="gpname" value="{{.Name}}" hidden>
-                <input type="submit" value="send" />
+                <input type="submit" value="додати" class="btn btn-light" />
             </form>
         </td>
-        <td style="text-align:left;vertical-align:top;" class="col-8">
+        <td style="text-align:left;vertical-align:top;" class="container-sm">
             <div class="span10">
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title" id="tit">Ім'я правила: </h4>
-                        <script>
-                            document.getElementById("tit").style.display = "none";
-                        </script>
-                    </div>
                     <div class="panel-body">
-                        <span class="text-info" id="echoName"></span>
+                        <h3><span id="echoName"></span></h3>
                         <br>
                     </div>
                 </div>
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <br>
-                        <h4 class="panel-title" id="tit3">Значення: </h4>
-                        <script>
-                            document.getElementById("tit3").style.display = "none";
-                        </script>
-                    </div>
                     <div class="panel-body">
-                        <span class="text-secondary" id="echoValues"></span>
-                        <br>
+                        <b id="tit1">Підтримка версій Windows: </b><h4><span class="text-error" id="echoSupport" style="color:red;"></span></h4>
+                        <script>
+                            document.getElementById("tit1").style.display="none";
+                        </script>
                     </div>
                 </div>
+                <hr id="tit2">
+                <script>
+                    document.getElementById("tit2").style.display="none";
+                </script>
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <br>
-                        <h4 class="panel-title" id="tit1">Підтримка версій Windows: </h4>
-                        <script>
-                            document.getElementById("tit1").style.display = "none";
-                        </script>
-                    </div>
                     <div class="panel-body">
-                        <span class="text-error" id="echoSupport" style="color:red;"></span>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <br>
-                        <h4 class="panel-title" id="tit2">Опис: </h4>
-                        <script>
-                            document.getElementById("tit2").style.display = "none";
-                        </script>
-                    </div>
-                    <div class="panel-body">
-                        <span class="text-success" id="echoInfo"></span>
+                        <span id="echoInfo"></span>
                     </div>
                 </div>
             </div>
-
         </td>
     </tr>
 </table>

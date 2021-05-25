@@ -8,8 +8,69 @@
     <link href="/assets/bootstrap/css/bootstrap.css" rel="stylesheet">
     <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
     <link href="/assets/fontawesome/css/all.css" rel="stylesheet">
+    <link href="/assets/gpo.css" rel="stylesheet">
     <script src="/assets/gpo.js" type="text/javascript"></script>
-
+    <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+            var actions = $("table td:last-child").html();
+            // Append table with add row form on add new button click
+            $(".add-new").click(function(){
+                $(this).attr("disabled", "disabled");
+                var index = $("table tbody tr:last-child").index();
+                var row = '<tr>' +
+                    '<td><input type="text" class="form-control" name="name" id="name"></td>' +
+                    '<td><input type="text" class="form-control" name="value" id="value"></td>' +
+                    '<td>' + actions + '</td>' +
+                    '</tr>';
+                $("table").append(row);
+                $("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+            // Add row on add button click
+            $(document).on("click", ".add", function(){
+                var empty = false;
+                var input = $(this).parents("tr").find('input[type="text"]');
+                input.each(function(){
+                    if(!$(this).val()){
+                        $(this).addClass("error");
+                        empty = true;
+                    } else{
+                        $(this).removeClass("error");
+                    }
+                });
+                $(this).parents("tr").find(".error").first().focus();
+                if(!empty){
+                    input.each(function(){
+                        $(this).parent("td").html($(this).val());
+                    });
+                    $(this).parents("tr").find(".add, .edit").toggle();
+                    $(".add-new").removeAttr("disabled");
+                }
+            });
+            // Edit row on edit button click
+            $(document).on("click", ".edit", function(){
+                $(this).parents("tr").find("td:not(:last-child)").each(function(){
+                    $(this).html('<input type="text" class="form-control" value="' + $(this).text() + '">');
+                });
+                $(this).parents("tr").find(".add, .edit").toggle();
+                $(".add-new").attr("disabled", "disabled");
+            });
+            // Delete row on delete button click
+            $(document).on("click", ".delete", function(){
+                $(this).parents("tr").remove();
+                $(".add-new").removeAttr("disabled");
+            });
+        });
+    </script>
+    <style>
+        .breadcrumb-item.active {
+            color: #000000;
+        }
+        body {
+            background-color: #edeeef;
+        }
+    </style>
 </head>
 <body class="container">
 <nav style="--bs-breadcrumb-divider: '>'; background-color: #75AF26;" aria-label="breadcrumb" class="align-self-center d-flex p-2">
@@ -17,7 +78,9 @@
         <li class="breadcrumb-item" style="padding-left: 0rem;"><a href="/" class="navbar-brand"><i class="fas fa-users"></i></a></li>
         <li class="breadcrumb-item active" style="padding-left: 0rem;" aria-current="page">{{.Gpname}}</li>
     </ol>
-    <a href="/add?name={{.Gpname}}" class="align-self-center"><i class="fas fa-plus-circle"></i></a>
+    <div class="btn-group-sm text-end" role="group">
+        <a href="/add?name={{.Gpname}}" class="align-self-center btn-link"><i class="fas fa-plus-circle"></i></a>
+    </div>
 </nav>
 <div class="d-flex align-items-start">
     <div class="col-3" style="overflow-y: auto; height: 85vh;">
@@ -28,7 +91,7 @@
         {{end}}
     </div>
 </div>
-    <div class="tab-content" id="v-pills-tabContent">
+    <div class="tab-content container" id="v-pills-tabContent">
 {{range .Rules}}
         <div class="tab-pane fade show" id="v-pills-{{.Name}}" role="tabpanel" aria-labelledby="v-pills-{{.Name}}-tab">
             <p><h2>{{.DisplayName}}</h2></p>
@@ -45,7 +108,7 @@
             {{.ExplainText}}
         </div>
     </div>
-    <div><br>
+    <div >
         {{range .Values}}
         {{if ne .DisabledValue ""}}
         <div class="form-check">
@@ -101,29 +164,29 @@
             <input type="text" aria-label="Value" class="form-control" id="manualvn_text" inputmode="text" placeholder="Значення">
             <input type="text" aria-label="Info" class="form-control" id="manuali_text" inputmode="text" placeholder="Опис">
         </div>-->
-        <table id="myTable" class="table" data-toggle="table" data-mobile-responsive="true" data-pagination="true" data-height="460">
-
-            <thead>
-            <tr>
-                <th>ім'я</th>
-                <th>значення</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    <input id="ex2" type="text">
-                </td>
-                <td>
-                    <input id="ex3" type="text">
-                </td>
-                <td>
-                    <button class="btn btn-outline-success" id="addrow" class="addnew">+</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th>ім'я</th>
+                        <th>значення</th>
+                        <th>дії</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>
+                            <a class="add" title="Add" data-toggle="tooltip"><i class="fas fa-plus"></i></a>
+                            <a class="edit" title="Edit" data-toggle="tooltip"><i class="fas fa-edit"></i></a>
+                            <a class="delete" title="Delete" data-toggle="tooltip"><i class="fas fa-trash"></i></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                    <div>
+                        <button type="button" class="btn btn-primary add-new"><i class="fa fa-plus"></i></button>
+                    </div>
 
         {{else}}
         {{if eq .Type "REG_SZ"}}
@@ -142,9 +205,32 @@
         {{end}}
         {{end}}
         {{end}}
+        <p></p>
+        <div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="DELETE" id="flexCheckOne">
+                <label class="form-check-label" for="flexCheckOne">
+                    видалити значення?
+                </label>
+            </div>
+        </div>
         {{end}}
     </div>
-        </div>
+            <p>
+            <hr>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="DELETEALLVALUES" id="flexCheckAll">
+                <label class="form-check-label" for="flexCheckAll">
+                    видалити всі значення?
+                </label>
+            </div>
+            </p>
+            <p>
+                <button type="button" class="btn btn-success">зберегти</button>
+                <button type="button" class="btn btn-primary">копіювати</button>
+                <button type="button" class="btn btn-danger">видалити</button>
+            </p>
+    </div>
     {{end}}
     </div>
     </div>
