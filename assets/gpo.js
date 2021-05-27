@@ -1,13 +1,11 @@
-$(function(){
-    $("#tree").fancytree ({
+$(function() {
+    $("#tree").fancytree({
         checkbox: true,
         selectMode: 3,
         extensions: ["filter"],
-        quicksearch: false,
+        quicksearch: true,
         source: {
             url: "/admjson",
-            cache: true,
-            dataType: "json",
         },
         filter: {
             autoApply: true, // Re-apply last filter if lazy data is loaded
@@ -22,13 +20,13 @@ $(function(){
             mode: "hide" // Grayout unmatched nodes (pass "hide" to remove unmatched node instead)
         },
 
-        lazyLoad: function(event, ctx) {
-            ctx.result = {url: "/admjson"};
+        lazyLoad: function (event, ctx) {
+            ctx.result = {url: "filter_result.json"};
         },
-        loadChildren: function(event, ctx) {
+        loadChildren: function (event, ctx) {
             ctx.node.fixSelection3AfterClick();
         },
-        activate: function(event, data) {
+        activate: function (event, data) {
             if (data.node.title && !data.node.folder) {
                 $("#tit").show();
                 $("#echoName").text(data.node.title)
@@ -48,7 +46,7 @@ $(function(){
                 $("#echoInfo").text("");
             }
         },
-        deactivate: function(event, data) {
+        deactivate: function () {
             $("#tit1").hide();
             $("#tit2").hide();
             $("#tit3").hide();
@@ -57,14 +55,14 @@ $(function(){
             $("#echoName").text("");
         },
 
-        select: function(event, data) {
-            var selKeys = $.map(data.tree.getSelectedNodes(), function(node) {
+        select: function (event, data) {
+            var selKeys = $.map(data.tree.getSelectedNodes(), function (node) {
                 return node.data.id;
             });
             //$("#ids").text(selKeys.join(","));
             //$("#ids").val(selKeys.join(","));
             //$("#admtmpid").val(function() {
-            $("#ids").val(function() {
+            $("#ids").val(function () {
                 var emphasis = selKeys.join(",");
                 return emphasis;
             });
@@ -75,15 +73,14 @@ $(function(){
         cookieId: "fancytree-Cb3",
         idPrefix: "fancytree-Cb3-"
     });
-});
 
     var tree = $.ui.fancytree.getTree("#tree");
 
-//var tree = $("#tree").fancytree("getTree");
+    //var tree = $("#tree").fancytree("getTree");
 
     $(".fancytree-container").addClass("fancytree-connectors");
 
-    $("input[name=search]").on("keyup", function(e) {
+    $("input[name=search]").on("keyup", function (e) {
         var n,
             tree = $.ui.fancytree.getTree(),
             args = "autoApply autoExpand fuzzy hideExpanders highlight leavesOnly nodata".split(" "),
@@ -101,11 +98,10 @@ $(function(){
         }
         n = filterFunc.call(tree, match, opts);
         $("button#btnResetSearch").attr("disabled", false);
-        $("span#matches").text("(" + n + " matches)");
     }).focus();
 
-    $("button#btnResetSearch").click(function(e) {
+    $("button#btnResetSearch").click(function () {
         $("input[name=search]").val("");
-        $("span#matches").text("");
         tree.clearFilter();
     }).attr("disabled", true);
+});

@@ -9,7 +9,6 @@
     <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
     <link href="/assets/fontawesome/css/all.css" rel="stylesheet">
     <link href="/assets/gpo.css" rel="stylesheet">
-    <script src="/assets/gpo.js" type="text/javascript"></script>
     <script>
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();
@@ -76,7 +75,7 @@
 <nav style="--bs-breadcrumb-divider: '>'; background-color: #75AF26;" aria-label="breadcrumb" class="align-self-center d-flex p-2">
     <ol class="breadcrumb col-10 navbar-brand">
         <li class="breadcrumb-item" style="padding-left: 0rem;"><a href="/" class="navbar-brand"><i class="fas fa-users"></i></a></li>
-        <li class="breadcrumb-item active" style="padding-left: 0rem;" aria-current="page">{{.Gpname}}</li>
+        <li class="breadcrumb-item active" style="padding-left: 0rem;" id="gpname" aria-current="page">{{.Gpname}}</li>
     </ol>
     <div class="btn-group-sm text-end" role="group">
         <a href="/add?name={{.Gpname}}" class="align-self-center btn-link"><i class="fas fa-plus-circle"></i></a>
@@ -85,14 +84,14 @@
 <div class="d-flex align-items-start">
     <div class="col-3" style="overflow-y: auto; height: 85vh;">
     <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        {{range .Rules}}
+    {{range .Rules}}
         <button class="nav-link text-start" id="v-pills-{{.Name}}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-{{.Name}}" type="button" role="tab" aria-controls="v-pills-{{.Name}}" aria-selected="true">
-            {{.DisplayName}}</button>
-        {{end}}
+        {{.DisplayName}}</button>
+    {{end}}
     </div>
 </div>
     <div class="tab-content container" id="v-pills-tabContent">
-{{range .Rules}}
+    {{range .Rules}}
         <div class="tab-pane fade show" id="v-pills-{{.Name}}" role="tabpanel" aria-labelledby="v-pills-{{.Name}}-tab">
             <p><h2>{{.DisplayName}}</h2></p>
     <p>Class: {{.Class}}</p>
@@ -110,7 +109,7 @@
     </div>
     <div >
         {{range .Values}}
-        {{if ne .DisabledValue ""}}
+            {{if ne .DisabledValue ""}}
         <div class="form-check">
             <input class="form-check-input" type="radio" name="enable-disable-{{.ValueName}}" value="{{.EnabledValue}}" id="enable-disable-{{.ValueName}}">
             <label class="form-check-label" for="enable-disable-{{.ValueName}}">
@@ -123,8 +122,8 @@
                 Disabled
             </label>
         </div>
-        {{end}}
-        {{if ne .TrueValue ""}}
+            {{end}}
+            {{if ne .TrueValue ""}}
         <div class="form-check">
             <input class="form-check-input" type="radio" name="true-false-{{.ValueName}}" value="{{.TrueValue}}" id="true-false-{{.ValueName}}">
             <label class="form-check-label" for="true-false-{{.ValueName}}">
@@ -137,8 +136,8 @@
                 False
             </label>
         </div>
-        {{end}}
-        {{if and (eq .Dublicate 1) (ne .Value "") }}
+            {{end}}
+            {{if and (eq .Dublicate 1) (ne .Value "") }}
         <input hidden id="dublval-{{.ValueName}}" value="{{.Value}}">
         <input hidden id="dubldn-{{.ValueName}}" value="{{.DisplayName}}">
         <div>
@@ -155,9 +154,9 @@
                 }
             })
         </script>
-        {{ else }}
+            {{ else }}
         <p id="dname">{{.DisplayName}}</p>
-        {{if eq .ValueName "manual "}}
+            {{if eq .ValueName "manual "}}
         <!--<div class="input-group">
             <span class="input-group-text">Ім'я, значення і опис</span>
             <input type="text" aria-label="ValueName" class="form-control" id="manualv_text" inputmode="text" placeholder="Ім'я значення">
@@ -188,21 +187,21 @@
                         <button type="button" class="btn btn-primary add-new"><i class="fa fa-plus"></i></button>
                     </div>
 
-        {{else}}
-        {{if eq .Type "REG_SZ"}}
+            {{else}}
+            {{if eq .Type "REG_SZ"}}
         <input type="text" id="{{.ValueName}}_text" inputmode="text" placeholder="{{.ValueName}}" />
-        {{end}}
-        {{if and (eq .Type "REG_DWORD") (eq .DisabledValue "")}}
+            {{end}}
+            {{if and (eq .Type "REG_DWORD") (eq .DisabledValue "")}}
         <input type="number" id="{{.ValueName}}_number" inputmode="numeric" placeholder="{{.ValueName}}" />
-        {{end}}
-        {{if eq .Type "REG_MULTISZ"}}
+            {{end}}
+            {{if eq .Type "REG_MULTISZ"}}
         <textarea rows = "5" cols = "60" name = "{{.ValueName}}_multiline" id="{{.ValueName}}_multiline">
                 {{.ValueName}}
             </textarea>
-        {{end}}
-        {{if eq .Type "REG_QWORD"}}
+            {{end}}
+            {{if eq .Type "REG_QWORD"}}
         <input type="text" id="{{.ValueName}}_bin" inputmode="text" placeholder="{{.ValueName}}" />
-        {{end}}
+            {{end}}
         {{end}}
         {{end}}
         <p></p>
@@ -214,7 +213,7 @@
                 </label>
             </div>
         </div>
-        {{end}}
+    {{end}}
     </div>
             <p>
             <hr>
@@ -226,12 +225,21 @@
             </div>
             </p>
             <p>
-                <button type="button" class="btn btn-success">зберегти</button>
-                <button type="button" class="btn btn-primary">копіювати</button>
-                <button type="button" class="btn btn-danger">видалити</button>
+                <a class="btn btn-success" id="savebtn" href=""><i class="fas fa-save"></i></a>
+                <a class="btn btn-primary" id="copybtn" href=""><i class="fas fa-copy"></i></a>
+                <a class="btn btn-danger" id="deletebtn" href=""><i class="fas fa-trash"></i></a>
             </p>
+            <script>
+                var gpname = document.getElementById("gpname").innerText;
+                console.log(gpname);
+                $(document).onclick(function() {
+                    $("#savebtn").attr("href", "/save?id={{.ID}}&gpname=" + gpname);
+                    $("#copybtn").attr("href", "/copy?id={{.ID}}&gpname=" + gpname);
+                    $("#deletebtn").attr("href", "/delete?id={{.ID}}&gpname=" + gpname);
+                });
+            </script>
     </div>
-    {{end}}
+{{end}}
     </div>
     </div>
 </body>

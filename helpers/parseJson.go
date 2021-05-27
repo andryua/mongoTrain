@@ -1,13 +1,9 @@
 package helpers
 
 import (
-	"encoding/json"
-	"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
-	"io/ioutil"
 	"log"
-	"os"
 	"strings"
 )
 
@@ -39,7 +35,7 @@ type AllPoliciesBson struct {
 	Dependencies string        `bson:"dependencies,omitempty"`
 }
 
-type Presentation_json struct {
+/*type Presentation_json struct {
 	Chardata string `json:",chardata,omitempty"`
 	ID       string `json:"id,omitempty"`
 	CheckBox []struct {
@@ -87,7 +83,7 @@ type Presentation_json struct {
 		Text  string `json:",chardata,omitempty"`
 		RefId string `json:"refId,omitempty"`
 	} `json:"multiTextBox,omitempty"`
-}
+}*/
 
 type Values struct {
 	Type          string `json:"type,omitempty" bson:"type,omitempty"`
@@ -120,33 +116,19 @@ func unique(vals []Values) []Values {
 	return list
 }
 
-func GetAllgp(c *mgo.Collection) {
-	jsonFile, err := os.Open("gpo.json")
-	// if we os.Open returns an error then handle it
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println("Successfully Opened users.json")
-	// defer the closing of our jsonFile so that we can parse it later on
-	defer jsonFile.Close()
-	// read our opened jsonFile as a byte array.
-	byteValue, _ := ioutil.ReadAll(jsonFile)
-
-	jsonGP := []AllPolicies{}
-	json.Unmarshal(byteValue, &jsonGP)
-	//bsonGP := []AllPoliciesBson{}
+func AllgpToBson(c *mgo.Collection, result []AllPolicies) {
 	r := AllPoliciesBson{}
-	for _, pol := range joinValues(jsonGP) {
+	for _, pol := range joinValues(result) {
+		r.ID = pol.ID
 		r.Category = pol.Category
 		r.Class = pol.Class
 		r.DisplayName = pol.DisplayName
 		r.SupportedOn = pol.SupportedOn
-		r.ID = pol.ID
 		r.ExplainText = pol.ExplainText
 		r.Values = pol.Values
 		r.Name = pol.Name
 
-		err = c.Insert(&r)
+		err := c.Insert(&r)
 		if err != nil {
 			log.Fatal(err)
 		}

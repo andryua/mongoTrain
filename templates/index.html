@@ -62,9 +62,9 @@
         <td>{{.Type}}</td>
         <td>{{.Description}}</td>
         <td>
-            <button class="btn btn-link btn-sm" type="button"><i class="fa fa-cloud"></i></button>
-            <button class="btn btn-link btn-sm" type="button"><i class="fa fa-trash"></i></button>
-            <button class="btn btn-link btn-sm" type="button"><i class="fa fa-download"></i></button>
+            <!--<a class="btn btn-link btn-sm" href="/upload?name={{.Name}}"><i class="fa fa-cloud"></i></a>-->
+            <a class="btn btn-link btn-sm" href="/delete?name={{.Name}}"><i class="fa fa-trash"></i></a>
+            <a class="btn btn-link btn-sm" href="/download?name={{.Name}}"><i class="fa fa-file-download"></i></a>
         </td>
     </tr>
     {{end}}
