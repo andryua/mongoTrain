@@ -85,3 +85,32 @@ func SendId(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(name)
 	http.Redirect(w, r, "/edit?name="+name, 301)
 }
+
+func CopyRule(w http.ResponseWriter, r *http.Request) {
+	session := ConnectDB()
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil {
+		fmt.Printf("atoi fail: %v\n", err)
+	}
+	gpname := r.URL.Query().Get("gpname")
+	gpsel := session.DB("gp").C("gpsel")
+	defer session.Close()
+	cpDoc := AllPoliciesBson{}
+	err = gpsel.Find(bson.M{"id": id, "gpname": gpname}).All(&cpDoc)
+	if err != nil {
+		fmt.Printf("find fail: %v\n", err)
+	}
+	if gpname != "" {
+		cpDoc.GpName = gpname
+		if cpDoc.ID == -1 {
+			cpDoc.ID--
+		} else {
+			cpDoc.ID = -1
+		}
+		err = gpsel.Insert(cpDoc)
+		if err != nil {
+			fmt.Printf("insert fail: %v\n", err)
+		}
+		http.Redirect(w, r, "/edit?name="+gpname, 301)
+	}
+}

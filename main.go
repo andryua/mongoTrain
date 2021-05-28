@@ -47,6 +47,7 @@ func main() {
 	http.HandleFunc("/edit", helpers.EditGP)
 	http.HandleFunc("/delete", helpers.DeleteGP)
 	http.HandleFunc("/download", helpers.DownloadGP)
+	http.HandleFunc("/copy", helpers.CopyRule)
 
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir("./assets/")))) //погашення папки (щоб при роботі сервера він знав де брати файли для вебу)
 

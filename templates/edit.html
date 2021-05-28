@@ -78,7 +78,7 @@
         <li class="breadcrumb-item active" style="padding-left: 0rem;" id="gpname" aria-current="page">{{.Gpname}}</li>
     </ol>
     <div class="btn-group-sm text-end" role="group">
-        <a href="/add?name={{.Gpname}}" class="align-self-center btn-link"><i class="fas fa-plus-circle"></i></a>
+        <a href="/add?name={{.Gpname}}" class="btn-link"><i class="fas fa-plus-circle"></i></a>
     </div>
 </nav>
 <div class="d-flex align-items-start">
@@ -225,19 +225,16 @@
             </div>
             </p>
             <p>
-                <a class="btn btn-success" id="savebtn" href=""><i class="fas fa-save"></i></a>
-                <a class="btn btn-primary" id="copybtn" href=""><i class="fas fa-copy"></i></a>
-                <a class="btn btn-danger" id="deletebtn" href=""><i class="fas fa-trash"></i></a>
+                <a class="btn btn-success" id="savebtn-{{.ID}}" href="#"><i class="fas fa-save"></i></a>
+                <a class="btn btn-primary" id="copybtn-{{.ID}}" href="#"><i class="fas fa-copy"></i></a>
+                <a class="btn btn-danger" id="deletebtn-{{.ID}}" href="#"><i class="fas fa-trash"></i></a>
+                <script>
+                    var gpname = document.getElementById("gpname").innerText;
+                    document.getElementById("deletebtn-{{.ID}}").href = "/delete?id={{.ID}}&gpname=" + gpname;
+                    document.getElementById("copybtn-{{.ID}}").href = "/copy?id={{.ID}}&gpname=" + gpname;
+                    document.getElementById("savebtn-{{.ID}}").href = "/save?id={{.ID}}&gpname=" + gpname;
+                </script>
             </p>
-            <script>
-                var gpname = document.getElementById("gpname").innerText;
-                console.log(gpname);
-                $(document).onclick(function() {
-                    $("#savebtn").attr("href", "/save?id={{.ID}}&gpname=" + gpname);
-                    $("#copybtn").attr("href", "/copy?id={{.ID}}&gpname=" + gpname);
-                    $("#deletebtn").attr("href", "/delete?id={{.ID}}&gpname=" + gpname);
-                });
-            </script>
     </div>
 {{end}}
     </div>
