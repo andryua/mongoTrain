@@ -69,6 +69,9 @@
         body {
             background-color: #edeeef;
         }
+        .btn-link {
+            color: #000000;
+        }
     </style>
 </head>
 <body class="container">
@@ -78,7 +81,7 @@
         <li class="breadcrumb-item active" style="padding-left: 0rem;" id="gpname" aria-current="page">{{.Gpname}}</li>
     </ol>
     <div class="btn-group-sm text-end" role="group">
-        <a href="/add?name={{.Gpname}}" class="btn-link"><i class="fas fa-plus-circle"></i></a>
+        <a href="/add?name={{.Gpname}}" class="btn-link"><i class="fas fa-plus-circle" style="line-height: 2;"></i></a>
     </div>
 </nav>
 <div class="d-flex align-items-start">
@@ -87,6 +90,14 @@
     {{range .Rules}}
         <button class="nav-link text-start" id="v-pills-{{.Name}}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-{{.Name}}" type="button" role="tab" aria-controls="v-pills-{{.Name}}" aria-selected="true">
         {{.DisplayName}}</button>
+        <script>
+            var gpname = document.getElementById("gpname").innerText;
+            var rulegpname = "{{.GpName}}";
+            var lnk = document.getElementById("v-pills-{{.Name}}-tab");
+            if (gpname != rulegpname) {
+                lnk.style = "color: #000000;"
+            }
+        </script>
     {{end}}
     </div>
 </div>
@@ -97,11 +108,13 @@
     <p>Class: {{.Class}}</p>
     <p>Category: {{.Category}}</p>
     <p>Supported on: {{.SupportedOn}}</p>
+    <p>GP Name: {{.GpName}}</p>
     <p>
     <button class="btn btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
         Опис
     </button>
     </p>
+    <form method="POST" id="update-form-{{.Name}}" action="/update?name={{.Name}}&gpname={{.GpName}}">
     <div class="collapse" id="collapseExample">
         <div class="card card-body">
             {{.ExplainText}}
@@ -227,15 +240,19 @@
             <p>
                 <a class="btn btn-success" id="savebtn-{{.ID}}" href="#"><i class="fas fa-save"></i></a>
                 <a class="btn btn-primary" id="copybtn-{{.ID}}" href="#"><i class="fas fa-copy"></i></a>
-                <a class="btn btn-danger" id="deletebtn-{{.ID}}" href="#"><i class="fas fa-trash"></i></a>
+                <a class="btn btn-danger" id="deletebtn-{{.ID}}" href="/delete?id={{.ID}}&gpname={{.GpName}}"><i class="fas fa-trash"></i></a>
                 <script>
                     var gpname = document.getElementById("gpname").innerText;
-                    document.getElementById("deletebtn-{{.ID}}").href = "/delete?id={{.ID}}&gpname=" + gpname;
-                    document.getElementById("copybtn-{{.ID}}").href = "/copy?id={{.ID}}&gpname=" + gpname;
-                    document.getElementById("savebtn-{{.ID}}").href = "/save?id={{.ID}}&gpname=" + gpname;
+                    var rulegpname = "{{.GpName}}";
+                    var lnk = document.getElementById("v-pills-{{.Name}}-tab");
+                    if (gpname != rulegpname) {
+                        document.getElementById("deletebtn-{{.ID}}").style.display = "none";
+                        document.getElementById("savebtn-{{.ID}}").style.display = "none";
+                    };
                 </script>
             </p>
     </div>
+        </form>
 {{end}}
     </div>
     </div>

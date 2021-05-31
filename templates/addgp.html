@@ -7,7 +7,7 @@
     <div class="modal-body">
     <input class="form-control" type="text" placeholder="Введіть ім'я політики" aria-label="default input example" id="gpname" name="gpname" data-length="25">
     <div class="input-field col s8">
-        <select name="gptype" id="gptype" class="form-select">
+        <select name="gptype" id="gptype" class="form-select" onchange="funcSelect(this);">
             <option disabled selected>--Оберіть тип політики--</option>
             <option value="main">Головна</option>
             <option value="default">Типова</option>
@@ -16,6 +16,37 @@
     </div>
     <textarea class="form-control" id="gpinfo" name="gpinfo" rows="3" placeholder="Введіть опис політики"></textarea>
     </div>
+    <div class="form-group container" id="hide">
+        <a class="btn btn-light" id="collapsedit" data-bs-toggle="collapse" href="#collapse22" role="button" aria-expanded="false" aria-controls="collapse" style="display: none">Змінити головні політики</a>
+        <div class="collapse" id="collapse22">
+            <div class="card card-body">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">вибір</th>
+                        <th scope="col">ім'я</th>
+                        <th scope="col">опис</th>
+                    </tr>
+                    </thead>
+                    <tbody id="chckbx">
+                    {{range .GPList}}
+                    <tr class="{{.Type}}">
+                        <th scope="row">
+                            <input type="checkbox" name="gpdepend" value="{{.Name}}" />
+                        </th>
+                        <td>
+                            {{.Name}}
+                        </td>
+                        <td>
+                            {{.Description}}
+                        </td>
+
+                    </tr>
+                    {{end}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрити</button>
         <button type="submit" class="btn btn-primary">Зберегти</button>

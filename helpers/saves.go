@@ -14,19 +14,50 @@ type ListGP struct {
 	Name        string        `bson:"name"`
 	Type        string        `bson:"type"`
 	Description string        `bson:"description"`
-	Dependency  string        `bson:"dependency"`
+	Dependency  []string      `bson:"dependency"`
+}
+
+func AddGP(w http.ResponseWriter, r *http.Request) {
+	session := ConnectDB()
+	c := session.DB("gp").C("gplist")
+	lstgp := ListGP{}
+	//var depend []string
+	if r.Method == "POST" {
+		r.ParseForm()
+		lstgp.Name = r.FormValue("gpname")
+		lstgp.Type = r.FormValue("gptype")
+		lstgp.Description = r.FormValue("gpinfo")
+		lstgp.Dependency = r.Form["gpdepend"]
+	}
+	//fmt.Println(depend)
+	c.Insert(lstgp)
+	http.Redirect(w, r, "/", 301)
 }
 
 func DownloadGP(w http.ResponseWriter, r *http.Request) {
 	session := ConnectDB()
 	name := r.URL.Query().Get("name")
 	c := session.DB("gp").C("gpsel")
+	gpl := session.DB("gp").C("gplist")
 	defer session.Close()
 	gplst := []AllPoliciesBson{}
+	gpdep := []AllPoliciesBson{}
+	gpls := ListGP{}
 	s := ""
-	err := c.Find(bson.M{"gpname": name}).All(&gplst)
+	err := gpl.Find(bson.M{"name": name}).One(&gpls)
+	err = c.Find(bson.M{"gpname": name}).All(&gplst)
 	if err != nil {
-		fmt.Printf("find from delete fail %v\n", err)
+		fmt.Printf("fail %v\n", err)
+	}
+	if len(gpls.Dependency) > 0 {
+		for _, dependence := range gpls.Dependency {
+			gpdep = nil
+			err = c.Find(bson.M{"gpname": dependence}).All(&gpdep)
+			if err != nil {
+				fmt.Printf("fail %v\n", err)
+			}
+			gplst = append(gplst, gpdep...)
+		}
 	}
 	for _, data := range gplst {
 		scope := ""
@@ -86,7 +117,9 @@ func SendId(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/edit?name="+name, 301)
 }
 
+/*
 func CopyRule(w http.ResponseWriter, r *http.Request) {
+	//зміна не лише ід, але і назви гп і її типу
 	session := ConnectDB()
 	id, err := strconv.Atoi(r.URL.Query().Get("id"))
 	if err != nil {
@@ -114,3 +147,4 @@ func CopyRule(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/edit?name="+gpname, 301)
 	}
 }
+*/

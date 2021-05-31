@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"fmt"
 	"gopkg.in/mgo.v2/bson"
 	"html/template"
 	"log"
@@ -36,8 +37,22 @@ func EditGP(w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(name)
 	session := ConnectDB()
 	c := session.DB("gp").C("gpsel")
+	gpl := session.DB("gp").C("gplist")
 	var sh = []AllPoliciesBson{}
-	err := c.Find(bson.M{"gpname": name}).All(&sh)
+	var rules = []AllPoliciesBson{}
+	var gplst = ListGP{}
+	err := gpl.Find(bson.M{"name": name}).One(&gplst)
+	err = c.Find(bson.M{"gpname": name}).All(&sh)
+	if len(gplst.Dependency) > 0 {
+		for _, dependence := range gplst.Dependency {
+			rules = nil
+			err = c.Find(bson.M{"gpname": dependence}).All(&rules)
+			if err != nil {
+				fmt.Printf("fail %v\n", err)
+			}
+			sh = append(sh, rules...)
+		}
+	}
 	//fmt.Println(sh)
 	if err != nil {
 		log.Fatal("find in db:", err)
@@ -50,24 +65,22 @@ func EditGP(w http.ResponseWriter, r *http.Request) {
 	t.ExecuteTemplate(w, "editgp", v)
 }
 
-func AddGP(w http.ResponseWriter, r *http.Request) {
-	session := ConnectDB()
-	c := session.DB("gp").C("gplist")
-	lstgp := ListGP{}
-	if r.Method == "POST" {
-		r.ParseForm()
-		lstgp.Name = r.FormValue("gpname")
-		lstgp.Type = r.FormValue("gptype")
-		lstgp.Description = r.FormValue("gpinfo")
-		lstgp.Dependency = r.FormValue("gpdepend")
-	}
-	c.Insert(lstgp)
-	http.Redirect(w, r, "/", 301)
-}
-
 func ShowAddGP(w http.ResponseWriter, r *http.Request) {
+	session := ConnectDB()
+	var lstgp = []ListGP{}
+	c := session.DB("gp").C("gplist")
+	defer session.Close()
+	err := c.Find(bson.M{}).All(&lstgp)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var v = make(map[string]interface{})
+	v["GPList"] = lstgp
 	t := template.Must(template.ParseFiles("./templates/addgp.html"))
-	t.ExecuteTemplate(w, "addgp", "")
+	err = t.ExecuteTemplate(w, "addgp", v)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func GPTree(w http.ResponseWriter, r *http.Request) {

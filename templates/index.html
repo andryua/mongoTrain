@@ -8,12 +8,16 @@
     <link href="/assets/bootstrap/css/bootstrap.css" rel="stylesheet">
     <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
     <link href="/assets/fontawesome/css/all.css" rel="stylesheet">
+    <script src="/assets/scripts.js"></script>
     <style>
         .breadcrumb-item.active {
             color: #000000;
         }
         body {
            background-color: #edeeef;
+        }
+        .btn-link {
+            color: #000000;
         }
     </style>
 </head>
@@ -59,15 +63,54 @@
     {{range .GPList}}
     <tr>
         <td><a href="/edit?name={{.Name}}">{{.Name}}</a></td>
-        <td>{{.Type}}</td>
+        <td class="gptype">{{.Type}}</td>
         <td>{{.Description}}</td>
         <td>
             <!--<a class="btn btn-link btn-sm" href="/upload?name={{.Name}}"><i class="fa fa-cloud"></i></a>-->
-            <a class="btn btn-link btn-sm" href="/delete?name={{.Name}}"><i class="fa fa-trash"></i></a>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#deleteGP">
+                <i class="fa fa-trash"></i>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="deleteGP" tabindex="-1" aria-labelledby="deleteGPLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Ви видаляєте групову політику - {{.Name}}?</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Скасувати</button>
+                            <a class="btn btn-danger btn-sm" href="/delete?name={{.Name}}">Видалити</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <a class="btn btn-link btn-sm" href="/download?name={{.Name}}"><i class="fa fa-file-download"></i></a>
         </td>
     </tr>
     {{end}}
+    <script>
+        var gptype = document.querySelectorAll(".gptype");
+        var keyarr = Object.keys(gptype);
+        keyarr.forEach(function (key){
+            switch (gptype[key].innerText) {
+                default:
+                    gptype[key].innerText = "невідомо";
+                    break;
+                case "main":
+                    gptype[key].innerText = "Головна";
+                    break;
+                case "default":
+                    gptype[key].innerText = "Типова";
+                    break;
+                case "users":
+                    gptype[key].innerText = "Користувацька";
+                    break;
+            }
+        });
+    </script>
     </tbody>
 </table>
 
