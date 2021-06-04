@@ -9,59 +9,7 @@
     <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
     <link href="/assets/fontawesome/css/all.css" rel="stylesheet">
     <link href="/assets/gpo.css" rel="stylesheet">
-    <script>
-        $(document).ready(function(){
-            $('[data-toggle="tooltip"]').tooltip();
-            var actions = $("table td:last-child").html();
-            // Append table with add row form on add new button click
-            $(".add-new").click(function(){
-                $(this).attr("disabled", "disabled");
-                var index = $("table tbody tr:last-child").index();
-                var row = '<tr>' +
-                    '<td><input type="text" class="form-control" name="name" id="name"></td>' +
-                    '<td><input type="text" class="form-control" name="value" id="value"></td>' +
-                    '<td>' + actions + '</td>' +
-                    '</tr>';
-                $("table").append(row);
-                $("table tbody tr").eq(index + 1).find(".add, .edit").toggle();
-                $('[data-toggle="tooltip"]').tooltip();
-            });
-            // Add row on add button click
-            $(document).on("click", ".add", function(){
-                var empty = false;
-                var input = $(this).parents("tr").find('input[type="text"]');
-                input.each(function(){
-                    if(!$(this).val()){
-                        $(this).addClass("error");
-                        empty = true;
-                    } else{
-                        $(this).removeClass("error");
-                    }
-                });
-                $(this).parents("tr").find(".error").first().focus();
-                if(!empty){
-                    input.each(function(){
-                        $(this).parent("td").html($(this).val());
-                    });
-                    $(this).parents("tr").find(".add, .edit").toggle();
-                    $(".add-new").removeAttr("disabled");
-                }
-            });
-            // Edit row on edit button click
-            $(document).on("click", ".edit", function(){
-                $(this).parents("tr").find("td:not(:last-child)").each(function(){
-                    $(this).html('<input type="text" class="form-control" value="' + $(this).text() + '">');
-                });
-                $(this).parents("tr").find(".add, .edit").toggle();
-                $(".add-new").attr("disabled", "disabled");
-            });
-            // Delete row on delete button click
-            $(document).on("click", ".delete", function(){
-                $(this).parents("tr").remove();
-                $(".add-new").removeAttr("disabled");
-            });
-        });
-    </script>
+    <script src="/assets/scripts.js"></script>
     <style>
         .breadcrumb-item.active {
             color: #000000;
@@ -76,17 +24,26 @@
 </head>
 <body class="container">
 <nav style="--bs-breadcrumb-divider: '>'; background-color: #75AF26;" aria-label="breadcrumb" class="align-self-center d-flex p-2">
-    <ol class="breadcrumb col-10 navbar-brand">
+    <ol class="breadcrumb col-11 navbar-brand">
         <li class="breadcrumb-item" style="padding-left: 0rem;"><a href="/" class="navbar-brand"><i class="fas fa-users"></i></a></li>
         <li class="breadcrumb-item active" style="padding-left: 0rem;" id="gpname" aria-current="page">{{.Gpname}}</li>
     </ol>
-    <div class="btn-group-sm text-end" role="group">
-        <a href="/add?name={{.Gpname}}" class="btn-link"><i class="fas fa-plus-circle" style="line-height: 2;"></i></a>
+    <div class="dropdown col-1">
+        <button class="btn btn-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-ellipsis-v"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton1">
+            <li><a href="/add?name={{.Gpname}}" class="dropdown-item">Додати правила</a></li>
+            <li><button type="button" class="dropdown-item modal1" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Редагувати політику
+            </button></li>
+        </ul>
     </div>
 </nav>
 <div class="d-flex align-items-start">
     <div class="col-3" style="overflow-y: auto; height: 85vh;">
     <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <input class="form-control fas fa-search" id="mySearch" type="text" placeholder="&#xF002;">
     {{range .Rules}}
         <button class="nav-link text-start" id="v-pills-{{.Name}}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-{{.Name}}" type="button" role="tab" aria-controls="v-pills-{{.Name}}" aria-selected="true">
         {{.DisplayName}}</button>
@@ -95,167 +52,224 @@
             var rulegpname = "{{.GpName}}";
             var lnk = document.getElementById("v-pills-{{.Name}}-tab");
             if (gpname != rulegpname) {
-                lnk.style = "color: #000000;"
+                lnk.style = "color: #000000;";
+                lnk.innerText += " (" + rulegpname + ")";
             }
         </script>
     {{end}}
+        <script>
+            $(document).ready(function(){
+                $("#mySearch").on("keyup", function() {
+                    var value = $(this).val().toLowerCase();
+                    $("#v-pills-tab button").filter(function() {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+            });
+        </script>
     </div>
 </div>
     <div class="tab-content container" id="v-pills-tabContent">
     {{range .Rules}}
         <div class="tab-pane fade show" id="v-pills-{{.Name}}" role="tabpanel" aria-labelledby="v-pills-{{.Name}}-tab">
-            <p><h2>{{.DisplayName}}</h2></p>
-    <p>Class: {{.Class}}</p>
-    <p>Category: {{.Category}}</p>
-    <p>Supported on: {{.SupportedOn}}</p>
-    <p>GP Name: {{.GpName}}</p>
-    <p>
-    <button class="btn btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-        Опис
-    </button>
-    </p>
-    <form method="POST" id="update-form-{{.Name}}" action="/update?name={{.Name}}&gpname={{.GpName}}">
-    <div class="collapse" id="collapseExample">
-        <div class="card card-body">
-            {{.ExplainText}}
+        <p><h2>{{.DisplayName}}</h2></p>
+        <p>Клас: {{.Class}}</p>
+        <p>Розділ: {{.Category}}</p>
+        <p>Підтримує: {{.SupportedOn}}</p>
+        <p>
+        <button class="btn btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            Опис
+        </button>
+        </p>
+        <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+                {{.ExplainText}}
+            </div>
         </div>
-    </div>
-    <div >
+    <form method="POST" id="update-form-{{.Name}}" >
+        <div id="gprules">
         {{range .Values}}
             {{if ne .DisabledValue ""}}
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="enable-disable-{{.ValueName}}" value="{{.EnabledValue}}" id="enable-disable-{{.ValueName}}">
-            <label class="form-check-label" for="enable-disable-{{.ValueName}}">
-                Enabled
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="enable-disable-{{.ValueName}}" value="{{.DisabledValue}}" id="enable-disable-{{.ValueName}}">
-            <label class="form-check-label" for="enable-disable-{{.ValueName}}">
-                Disabled
-            </label>
-        </div>
+                <input hidden id="selvalue-ENDI-{{.ValueName}}" value="{{.SelectedValue}}">
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.EnabledValue}}" id="enabled-{{.ValueName}}">
+                <label class="form-check-label" for="enabled-{{.ValueName}}">
+                    Enabled
+                </label>
+                </div>
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.DisabledValue}}" id="disabled-{{.ValueName}}">
+                <label class="form-check-label" for="disabled-{{.ValueName}}">
+                    Disabled
+                </label>
+                </div>
+                <script>
+                var sel = document.getElementById("selvalue-ENDI-{{.ValueName}}").value;
+                var en = document.getElementById("enabled-{{.ValueName}}");
+                var di = document.getElementById("disabled-{{.ValueName}}");
+                if (sel === en.value) {
+                    en.checked = true;
+                    di.checked = false;
+                }
+                if (sel === di.value) {
+                    di.checked = true;
+                    en.checked = false;
+                }
+                </script>
             {{end}}
             {{if ne .TrueValue ""}}
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="true-false-{{.ValueName}}" value="{{.TrueValue}}" id="true-false-{{.ValueName}}">
-            <label class="form-check-label" for="true-false-{{.ValueName}}">
-                True
-            </label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="true-false-{{.ValueName}}" value="{{.FalseValue}}" id="true-false-{{.ValueName}}">
-            <label class="form-check-label" for="true-false-{{.ValueName}}">
-                False
-            </label>
-        </div>
-            {{end}}
-            {{if and (eq .Dublicate 1) (ne .Value "") }}
-        <input hidden id="dublval-{{.ValueName}}" value="{{.Value}}">
-        <input hidden id="dubldn-{{.ValueName}}" value="{{.DisplayName}}">
-        <div>
-            <select id="gpvalues-{{.ValueName}}" class="form-select" aria-label="Default select example">
-                <option value="" disabled="" selected="">Виберіть значення</option>
-            </select>
-        </div>
-        <script>
-            $(document).ready(function() {
-                var vals = $("#dublval-{{.ValueName}}").val().split("|");
-                var dnames = $("#dubldn-{{.ValueName}}").val().split("|");
-                for (let [i, val] of vals.entries()) {
-                    $("#gpvalues-{{.ValueName}}").append(new Option(dnames[i], val));
+                <input hidden id="selvalue-TRFL-{{.ValueName}}" value="{{.SelectedValue}}">
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.TrueValue}}" id="true-{{.ValueName}}">
+                <label class="form-check-label" for="true-{{.ValueName}}">
+                    True
+                </label>
+                </div>
+                <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.FalseValue}}" id="false-{{.ValueName}}">
+                <label class="form-check-label" for="false-{{.ValueName}}">
+                    False
+                </label>
+                </div>
+                <script>
+                var sel = document.getElementById("selvalue-TRFL-{{.ValueName}}").value;
+                var en = document.getElementById("true-{{.ValueName}}");
+                var di = document.getElementById("false-{{.ValueName}}");
+                if (sel === en.value) {
+                    en.checked = true;
+                    di.checked = false;
                 }
-            })
-        </script>
+                if (sel === di.value) {
+                    di.checked = true;
+                    en.checked = false;
+                }
+                </script>
+            {{end}}
+            {{if .Dublicate}}
+                <input hidden id="dublval-{{.ValueName}}" value="{{.Value}}">
+                <input hidden id="dubldn-{{.ValueName}}" value="{{.DisplayName}}">
+                <input hidden id="dublsel-{{.ValueName}}" value="{{.SelectedValue}}">
+                <div>
+                <select id="gpvalues-{{.ValueName}}" name="{{.ValueName}}" class="form-select" aria-label="Default select example">
+                    <option value="" disabled="" selected="">Виберіть значення</option>
+                </select>
+                </div>
+                <script>
+                    $(document).ready(function() {
+                        var vals = $("#dublval-{{.ValueName}}").val().split("|");
+                        var dnames = $("#dubldn-{{.ValueName}}").val().split("|");
+                        var selval = $("#dublsel-{{.ValueName}}").val();
+                        for (let [i, val] of vals.entries()) {
+                            if (val === "") {
+                                val = dnames[i];
+                            }
+                            $("#gpvalues-{{.ValueName}}").append(new Option(dnames[i], val));
+                            if (val === selval) {
+                                $("#gpvalues-{{.ValueName}} option[value="+val+"]").prop("selected",true);
+                            }
+
+                        }
+                    })
+                </script>
             {{ else }}
-        <p id="dname">{{.DisplayName}}</p>
-            {{if eq .ValueName "manual "}}
-        <!--<div class="input-group">
-            <span class="input-group-text">Ім'я, значення і опис</span>
-            <input type="text" aria-label="ValueName" class="form-control" id="manualv_text" inputmode="text" placeholder="Ім'я значення">
-            <input type="text" aria-label="Value" class="form-control" id="manualvn_text" inputmode="text" placeholder="Значення">
-            <input type="text" aria-label="Info" class="form-control" id="manuali_text" inputmode="text" placeholder="Опис">
-        </div>-->
-                <table class="table table-sm">
+                <p id="dname">{{.DisplayName}}</p>
+                {{if .Manual}}
+                    <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th>ім'я</th>
-                        <th>значення</th>
-                        <th>дії</th>
+                        <th scope="col">Ім'я значення</th>
+                        <th scope="col">Значення</th>
+                        <th scope="col">Опис</th>
+                        <th scope="col"></th>
                     </tr>
                     </thead>
-                    <tbody>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td>
-                            <a class="add" title="Add" data-toggle="tooltip"><i class="fas fa-plus"></i></a>
-                            <a class="edit" title="Edit" data-toggle="tooltip"><i class="fas fa-edit"></i></a>
-                            <a class="delete" title="Delete" data-toggle="tooltip"><i class="fas fa-trash"></i></a>
-                        </td>
+                    <tbody id="manualFields">
+                    <tr id="0">
+                        <th scope="row"><input type="text" name="manualValueName" aria-label="ValueName" class="form-control" id="manualvn_text-0" inputmode="text" placeholder="ім'я значення" value="{{.ValueName}}"></th>
+                        <td><input type="text" name="manualValue" aria-label="Value" class="form-control" id="manualv_text-0" inputmode="text" placeholder="значення" value="{{.Value}}" ></td>
+                        <td><input type="text" name="manualDescription" aria-label="Info" class="form-control" id="manuali_text-0" inputmode="text" placeholder="опис" value="{{.Notes}}" ></td>
+                        <td><button type="button" class="btn btn-primary add-new" onclick="funcAddManual(this)"><i class="fa fa-plus"></i></button></td>
                     </tr>
                     </tbody>
-                </table>
-                    <div>
-                        <button type="button" class="btn btn-primary add-new"><i class="fa fa-plus"></i></button>
-                    </div>
-
-            {{else}}
-            {{if eq .Type "REG_SZ"}}
-        <input type="text" id="{{.ValueName}}_text" inputmode="text" placeholder="{{.ValueName}}" />
+                    </table>
+                {{else}}
+                    {{if eq .Type "REG_SZ"}}
+                        <input type="text" id="{{.ValueName}}_text" name="{{.ValueName}}" inputmode="text" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
+                    {{end}}
+                    {{if and (eq .Type "REG_DWORD") (eq .DisabledValue "")}}
+                        <input type="text" id="{{.ValueName}}_number" name="{{.ValueName}}" inputmode="numeric" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
+                    {{end}}
+                    {{if eq .Type "REG_MULTISZ"}}
+                        <textarea rows = "5" cols = "60" name="{{.ValueName}}" id="{{.ValueName}}_multiline" placeholder="{{.ValueName}}">
+                            {{.SelectedValue}}
+                        </textarea>
+                    {{end}}
+                    {{if eq .Type "REG_QWORD"}}
+                        <input type="text" id="{{.ValueName}}_bin" name="{{.ValueName}}" inputmode="text" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
+                    {{end}}
+                {{end}}
             {{end}}
-            {{if and (eq .Type "REG_DWORD") (eq .DisabledValue "")}}
-        <input type="number" id="{{.ValueName}}_number" inputmode="numeric" placeholder="{{.ValueName}}" />
-            {{end}}
-            {{if eq .Type "REG_MULTISZ"}}
-        <textarea rows = "5" cols = "60" name = "{{.ValueName}}_multiline" id="{{.ValueName}}_multiline">
-                {{.ValueName}}
-            </textarea>
-            {{end}}
-            {{if eq .Type "REG_QWORD"}}
-        <input type="text" id="{{.ValueName}}_bin" inputmode="text" placeholder="{{.ValueName}}" />
-            {{end}}
+            <p></p>
         {{end}}
-        {{end}}
-        <p></p>
-        <div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="DELETE" id="flexCheckOne">
-                <label class="form-check-label" for="flexCheckOne">
-                    видалити значення?
-                </label>
-            </div>
         </div>
+        <p>
+        <hr>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="DELETE" id="flexCheckAll">
+            <label class="form-check-label" for="flexCheckAll">
+                видалити значення?
+            </label>
+        </div>
+        </p>
+        <p>
+            <a class="btn btn-success" id="savebtn-{{.Name}}" href="" onclick="funcSaveRule({{.Name}},{{.GpName}},{{.Class}})"><i class="fas fa-save"></i></a>
+            <a class="btn btn-primary" id="copybtn-{{.Name}}" href=""><i class="fas fa-copy"></i></a>
+            <a class="btn btn-danger" id="deletebtn-{{.Name}}" href="/deleterule?name={{.Name}}&gpname={{.GpName}}&class={{.Class}}"><i class="fas fa-trash"></i></a>
+            <p id="res-{{.Name}}"></p>
+            <script>
+                var gpname = document.getElementById("gpname").innerText;
+                var rulegpname = "{{.GpName}}";
+                var lnk = document.getElementById("v-pills-{{.Name}}");
+                if (gpname !== rulegpname) {
+                    document.getElementById("deletebtn-{{.Name}}").hidden = true;
+                    document.getElementById("savebtn-{{.Name}}").hidden = true;
+                    $("#v-pills-{{.Name}} :input").prop("disabled", true);
+                }
+            </script>
+        </p>
+        </div>
+    </form>
+        <p id="out"></p>
     {{end}}
     </div>
-            <p>
-            <hr>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="DELETEALLVALUES" id="flexCheckAll">
-                <label class="form-check-label" for="flexCheckAll">
-                    видалити всі значення?
-                </label>
-            </div>
-            </p>
-            <p>
-                <a class="btn btn-success" id="savebtn-{{.ID}}" href="#"><i class="fas fa-save"></i></a>
-                <a class="btn btn-primary" id="copybtn-{{.ID}}" href="#"><i class="fas fa-copy"></i></a>
-                <a class="btn btn-danger" id="deletebtn-{{.ID}}" href="/delete?id={{.ID}}&gpname={{.GpName}}"><i class="fas fa-trash"></i></a>
-                <script>
-                    var gpname = document.getElementById("gpname").innerText;
-                    var rulegpname = "{{.GpName}}";
-                    var lnk = document.getElementById("v-pills-{{.Name}}-tab");
-                    if (gpname != rulegpname) {
-                        document.getElementById("deletebtn-{{.ID}}").style.display = "none";
-                        document.getElementById("savebtn-{{.ID}}").style.display = "none";
-                    };
-                </script>
-            </p>
     </div>
-        </form>
-{{end}}
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
     </div>
-    </div>
+</div>
+
+<script>
+    $('.modal1').on('click',function(){
+        $('.modal-content').load('/showeditgp?name={{.Gpname}}',function(){
+            $('#exampleModal').modal({show:true});
+        });
+    });
+    /*
+    function showValues() {
+        var str = $("form").serialize();
+        $("#out").text( str );
+    }
+    $("input[type='checkbox'], input[type='radio']").on( "click", showValues );
+    $("select").on( "change", showValues );
+    showValues();
+     */
+</script>
+
 </body>
 </html>
 

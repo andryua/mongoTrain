@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 )
 
 func GPList(w http.ResponseWriter, r *http.Request) {
@@ -36,6 +37,7 @@ func EditGP(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	//fmt.Println(name)
 	session := ConnectDB()
+	defer session.Close()
 	c := session.DB("gp").C("gpsel")
 	gpl := session.DB("gp").C("gplist")
 	var sh = []AllPoliciesBson{}
@@ -89,4 +91,37 @@ func GPTree(w http.ResponseWriter, r *http.Request) {
 	var v = make(map[string]interface{})
 	v["Name"] = name
 	t.ExecuteTemplate(w, "gptree", v)
+}
+
+func ShowEditGP(w http.ResponseWriter, r *http.Request) {
+	session := ConnectDB()
+	var lstgp = []ListGP{}
+	var currgp = ListGP{}
+	name := r.URL.Query().Get("name")
+	c := session.DB("gp").C("gplist")
+	defer session.Close()
+	err := c.Find(bson.M{"name": name}).One(&currgp)
+	switch currgp.Type {
+	default:
+		break
+	case "default":
+		err = c.Find(bson.M{"type": "main"}).All(&lstgp)
+		break
+	case "users":
+		err = c.Find(bson.M{"type": "default"}).All(&lstgp)
+		break
+
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+	var v = make(map[string]interface{})
+	v["CurrGP"] = currgp
+	v["CurrDep"] = strings.Join(currgp.Dependency, "|")
+	v["GPList"] = lstgp
+	t := template.Must(template.ParseFiles("./templates/editgp.html"))
+	err = t.ExecuteTemplate(w, "editgp", v)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

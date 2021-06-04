@@ -18,6 +18,7 @@ type AllPolicies struct {
 	Category    string   `json:"category"`
 	SupportedOn string   `json:"supportedOn"`
 	Values      []Values `json:"values"`
+	HasManual   bool     `json:"hasManual"`
 }
 
 type AllPoliciesBson struct {
@@ -33,6 +34,7 @@ type AllPoliciesBson struct {
 	GpName       string        `bson:"gpname,omitempty"`
 	GpType       string        `bson:"gptype,omitempty"` // usr, def, sub
 	Dependencies string        `bson:"dependencies,omitempty"`
+	HasManual    bool          `bson:"manual,omitempty"`
 }
 
 /*type Presentation_json struct {
@@ -101,7 +103,9 @@ type Values struct {
 	ValuePrefix   string `json:"valuePrefix,omitempty" bson:"valuePrefix,omitempty"`
 	SelectedValue string `json:"selectedvalue,omitempty" bson:"selectedvalue,omitempty"`
 	Showing       string `json:"showing,omitempty" bson:"showing,omitempty"`
-	Dublicate     int    `json:"dublicate,omitempty" bson:"dublicate,omitempty"`
+	Dublicate     bool   `json:"dublicate,omitempty" bson:"dublicate,omitempty"`
+	Notes         string `json:"notes,omitempty" bson:"notes,omitempty"`
+	Manual        bool   `json:"manual,omitempty" bson:"manual,omitempty"`
 }
 
 func unique(vals []Values) []Values {
@@ -165,7 +169,7 @@ func recVals(vals []Values) []Values {
 	for _, val := range vals {
 		if strings.Contains(v[val.ValueName], "|") {
 			val.Value = v[val.ValueName]
-			val.Dublicate = 1
+			val.Dublicate = true
 		}
 		if strings.Contains(d[val.ValueName], "|") {
 			val.DisplayName = d[val.ValueName]

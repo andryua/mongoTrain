@@ -21,6 +21,7 @@ func AddGP(w http.ResponseWriter, r *http.Request) {
 	session := ConnectDB()
 	c := session.DB("gp").C("gplist")
 	lstgp := ListGP{}
+	defer session.Close()
 	//var depend []string
 	if r.Method == "POST" {
 		r.ParseForm()

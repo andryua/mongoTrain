@@ -26,11 +26,15 @@
     <ol class="breadcrumb col-11 navbar-brand">
         <li class="breadcrumb-item active" style="padding-left: 0rem;" aria-current="page"><i class="fas fa-users"></i></li>
     </ol>
-    <!-- Button trigger modal -->
-    <div class="btn-group-sm text-end" role="group">
-    <button type="button" class="btn btn-link modal1" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        <i class="fas fa-plus-circle"></i>
-    </button>
+    <div class="dropdown col-1">
+        <button class="btn btn-link" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-ellipsis-v"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton1">
+            <li><button type="button" class="dropdown-item modal1" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Додати політику
+            </button></li>
+        </ul>
     </div>
 </nav>
 
@@ -82,7 +86,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Скасувати</button>
-                            <a class="btn btn-danger btn-sm" href="/delete?name={{.Name}}">Видалити</a>
+                            <a class="btn btn-danger btn-sm" href="/deletegp?name={{.Name}}">Видалити</a>
                         </div>
                     </div>
                 </div>

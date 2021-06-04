@@ -7,33 +7,32 @@ function funcSelect(sel) {
     var keyarrusr = Object.keys(usrgp);
     switch (sel.value) {
         default:
-            document.getElementById("collapsedit").style.display = "none";
             break;
         case "main":
-            document.getElementById("collapsedit").style.display = "none";
+            document.getElementById("collapsedit").hidden = true;
             break;
         case "default":
-            document.getElementById("collapsedit").style.display = "block";
+            document.getElementById("collapsedit").hidden = false;
             keyarrdef.forEach(function (key){
-                defgp[key].style.display = "none";
+                defgp[key].hidden = true;
             });
             keyarrmain.forEach(function (key){
-                maingp[key].style.display = "block";
+                maingp[key].hiddent = false;
             });
             keyarrusr.forEach(function (key){
-                usrgp[key].style.display = "none";
+                usrgp[key].hidden = true;
             });
             break;
         case "users":
-            document.getElementById("collapsedit").style.display = "block";
+            document.getElementById("collapsedit").hidden = false;
             keyarrdef.forEach(function (key){
-                defgp[key].style.display = "block";
+                defgp[key].hidden = false;
             });
             keyarrmain.forEach(function (key){
-                maingp[key].style.display = "none";
+                maingp[key].hidden = true;
             });
             keyarrusr.forEach(function (key){
-                usrgp[key].style.display = "none";
+                usrgp[key].hidden = true;
             });
             break;
     }
@@ -53,4 +52,37 @@ function funcType(type) {
             type.innerText = "користувацька";
             break;
     }
+}
+
+function funcSaveRule(name,gpname,scope) {
+    //console.log(name,"\t",gpname,"\t",scope)
+    $.post(
+        "/update?name=" + name + "&gpname=" + gpname + "&class=" + scope,
+        $("#update-form-" + name).serialize(),
+        function(data) {
+            console.log(data)
+/*
+            if (data == "saved") {
+                $("#res" + name).html("<div class='alert alert-success alert-dismissible fade show' role='alert'>Зміни збережено!<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>");
+            } else {
+                $("#res" + name).html("<div class='alert alert-danger alert-dismissible fade show' role='alert'>Зміни не збережено!<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>");
+            }
+*/
+        },
+    );
+}
+
+k=1
+function funcAddManual(btn) {
+    var div = document.getElementById("manualFields");
+    btn.hidden = true;
+    //document.getElementById("manualvn_text-"+k).value = document.getElementById("manualvn_text-"+k).textContent;
+    k++;
+    div.innerHTML += '<tr id="' + k + '">\n' +
+        '            <th scope="row"><input type="text" name="manualValueName" aria-label="ValueName" class="form-control" id="manualvn_text' + k + ' inputmode="text" placeholder="Ім\'я значення"></th>\n' +
+        '            <td><input type="text" name="manualValue" aria-label="Value" class="form-control" id="manualv_text' + k + ' " inputmode="text" placeholder="Значення"></td>\n' +
+        '            <td><input type="text" name="manualDescription" aria-label="Info" class="form-control" id="manuali_text' + k + ' " inputmode="text" placeholder="Опис"></td>\n' +
+        '            <td><button type="button" class="btn btn-primary add-new" onclick="funcAddManual(this)"><i class="fa fa-plus"></i></button></td>\n' +
+        '            </tr>'
+    //$("#"+(k-1)).find("input").attr("readonly", true);
 }

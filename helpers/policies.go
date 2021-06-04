@@ -376,10 +376,13 @@ func PoliciesParse(data []Policy, lang map[string]string, keyPath map[string]str
 						it.Key = item.Key
 					}
 					it.Type = "REG_SZ"
-					it.ValueName = "manual " + item.ValuePrefix + ""
+					it.ValueName = "manual" + item.ValuePrefix + ""
+					it.Manual = true
+
 					if (Values{}) != it {
 						r.Values = append(r.Values, it)
 					}
+					r.HasManual = true
 					it = Values{}
 				}
 			}
