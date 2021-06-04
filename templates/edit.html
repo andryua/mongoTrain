@@ -196,7 +196,7 @@
                     {{if eq .Type "REG_SZ"}}
                         <input type="text" id="{{.ValueName}}_text" name="{{.ValueName}}" inputmode="text" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
                     {{end}}
-                    {{if and (eq .Type "REG_DWORD") (eq .DisabledValue "")}}
+                    {{if and (eq .Type "REG_DWORD") (eq .DisabledValue "") (eq .TrueValue "")}}
                         <input type="text" id="{{.ValueName}}_number" name="{{.ValueName}}" inputmode="numeric" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
                     {{end}}
                     {{if eq .Type "REG_MULTISZ"}}
