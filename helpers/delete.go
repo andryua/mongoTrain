@@ -22,14 +22,16 @@ func DeleteGP(w http.ResponseWriter, r *http.Request) {
 
 func DeleteRule(w http.ResponseWriter, r *http.Request) {
 	session := ConnectDB()
-	name := r.URL.Query().Get("name")
-	gpname := r.URL.Query().Get("gpname")
-	scope := r.URL.Query().Get("class")
+	id := r.URL.Query().Get("id")
+
+	var tmp AllPoliciesBson
 	gpsel := session.DB("gp").C("gpsel")
+	err := gpsel.Find(bson.M{"id": id}).One(&tmp)
+	//fmt.Println(tmp)
 	defer session.Close()
-	err := gpsel.Remove(bson.M{"name": name, "gpname": gpname, "class": scope})
+	err = gpsel.Remove(bson.M{"id": id})
 	if err != nil {
 		fmt.Printf("remove fail: %v\n", err)
 	}
-	http.Redirect(w, r, "/edit?name="+gpname, 301)
+	http.Redirect(w, r, "/edit?name="+tmp.GpName, 301)
 }

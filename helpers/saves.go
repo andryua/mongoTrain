@@ -24,14 +24,20 @@ func AddGP(w http.ResponseWriter, r *http.Request) {
 	defer session.Close()
 	//var depend []string
 	if r.Method == "POST" {
-		r.ParseForm()
+		err := r.ParseForm()
+		if err != nil {
+			fmt.Println(err)
+		}
 		lstgp.Name = r.FormValue("gpname")
 		lstgp.Type = r.FormValue("gptype")
 		lstgp.Description = r.FormValue("gpinfo")
 		lstgp.Dependency = r.Form["gpdepend"]
 	}
 	//fmt.Println(depend)
-	c.Insert(lstgp)
+	err := c.Insert(lstgp)
+	if err != nil {
+		fmt.Println(err)
+	}
 	http.Redirect(w, r, "/", 301)
 }
 
@@ -41,8 +47,8 @@ func DownloadGP(w http.ResponseWriter, r *http.Request) {
 	c := session.DB("gp").C("gpsel")
 	gpl := session.DB("gp").C("gplist")
 	defer session.Close()
-	gplst := []AllPoliciesBson{}
-	gpdep := []AllPoliciesBson{}
+	var gplst []AllPoliciesBson
+	var gpdep []AllPoliciesBson
 	gpls := ListGP{}
 	s := ""
 	err := gpl.Find(bson.M{"name": name}).One(&gpls)
@@ -82,7 +88,7 @@ func DownloadGP(w http.ResponseWriter, r *http.Request) {
 func SendId(w http.ResponseWriter, r *http.Request) {
 	ids := ""
 	name := ""
-	s := []string{}
+	var s []string
 	session := ConnectDB()
 	c := session.DB("gp").C("gpall")
 	rec := session.DB("gp").C("gpsel")
@@ -90,14 +96,17 @@ func SendId(w http.ResponseWriter, r *http.Request) {
 	defer session.Close()
 	var rr = AllPoliciesBson{}
 	if r.Method == "POST" {
-		r.ParseForm()
+		err := r.ParseForm()
+		if err != nil {
+			fmt.Println(err)
+		}
 		ids = r.FormValue("ids")
 		name = r.FormValue("gpname")
 		s = strings.Split(ids, ",")
 	}
 	for _, id := range s {
 		id_int, err := strconv.Atoi(id)
-		err = c.Find(bson.M{"id": id_int}).One(&rr)
+		err = c.Find(bson.M{"IDtmp": id_int}).One(&rr)
 		if err != nil {
 			log.Fatal("find in db:", err)
 		}
@@ -108,6 +117,7 @@ func SendId(w http.ResponseWriter, r *http.Request) {
 		exist, _ := rec.Find(bson.M{"name": rr.Name, "class": rr.Class, "gpname": rr.GpName, "gptype": rr.GpType}).Count()
 		if exist == 0 {
 			//fmt.Println(rr)
+			//rr.ID = bson.NewObjectId().Hex()
 			err = rec.Insert(&rr)
 			if err != nil {
 				log.Fatal(err)

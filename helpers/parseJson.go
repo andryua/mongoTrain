@@ -22,19 +22,20 @@ type AllPolicies struct {
 }
 
 type AllPoliciesBson struct {
-	_id          bson.ObjectId `bson:"_id"`
-	ID           int           `bson:"id"`
-	Name         string        `bson:"name"`
-	Class        string        `bson:"class"`
-	DisplayName  string        `bson:"displayName"`
-	ExplainText  string        `bson:"explainText"`
-	Category     string        `bson:"category"`
-	SupportedOn  string        `bson:"supportedOn"`
-	Values       []Values      `bson:"values"`
-	GpName       string        `bson:"gpname,omitempty"`
-	GpType       string        `bson:"gptype,omitempty"` // usr, def, sub
-	Dependencies string        `bson:"dependencies,omitempty"`
-	HasManual    bool          `bson:"manual,omitempty"`
+	//ID           bson.ObjectId `bson:"_id"`
+	ID           string   `bson:"id"`
+	IDtmp        int      `bson:"IDtmp"`
+	Name         string   `bson:"name"`
+	Class        string   `bson:"class"`
+	DisplayName  string   `bson:"displayName"`
+	ExplainText  string   `bson:"explainText"`
+	Category     string   `bson:"category"`
+	SupportedOn  string   `bson:"supportedOn"`
+	Values       []Values `bson:"values"`
+	GpName       string   `bson:"gpname,omitempty"`
+	GpType       string   `bson:"gptype,omitempty"` // usr, def, sub
+	Dependencies string   `bson:"dependencies,omitempty"`
+	HasManual    bool     `bson:"manual,omitempty"`
 }
 
 /*type Presentation_json struct {
@@ -123,7 +124,8 @@ func unique(vals []Values) []Values {
 func AllgpToBson(c *mgo.Collection, result []AllPolicies) {
 	r := AllPoliciesBson{}
 	for _, pol := range joinValues(result) {
-		r.ID = pol.ID
+		r.ID = bson.NewObjectId().Hex()
+		r.IDtmp = pol.ID
 		r.Category = pol.Category
 		r.Class = pol.Class
 		r.DisplayName = pol.DisplayName
@@ -134,14 +136,14 @@ func AllgpToBson(c *mgo.Collection, result []AllPolicies) {
 
 		err := c.Insert(&r)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	}
 }
 
 func joinValues(jsonGP []AllPolicies) []AllPolicies {
-	vals := []Values{}
-	resultGP := []AllPolicies{}
+	var vals []Values
+	var resultGP []AllPolicies
 	for _, pol := range jsonGP {
 		vals = recVals(pol.Values)
 		pol.Values = vals
@@ -151,7 +153,7 @@ func joinValues(jsonGP []AllPolicies) []AllPolicies {
 }
 
 func recVals(vals []Values) []Values {
-	newVals := []Values{}
+	var newVals []Values
 	var v = make(map[string]string)
 	var d = make(map[string]string)
 	for _, val := range vals {

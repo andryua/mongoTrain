@@ -54,20 +54,17 @@ function funcType(type) {
     }
 }
 
-function funcSaveRule(name,gpname,scope) {
-    //console.log(name,"\t",gpname,"\t",scope)
+function funcSaveRule(id) {
+    //console.log(id)
     $.post(
-        "/update?name=" + name + "&gpname=" + gpname + "&class=" + scope,
-        $("#update-form-" + name).serialize(),
+        "/update?id=" + id,
+        $("#update-form-" + id).serialize(),
         function(data) {
-            console.log(data)
-/*
             if (data == "saved") {
                 $("#res" + name).html("<div class='alert alert-success alert-dismissible fade show' role='alert'>Зміни збережено!<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>");
             } else {
                 $("#res" + name).html("<div class='alert alert-danger alert-dismissible fade show' role='alert'>Зміни не збережено!<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>");
             }
-*/
         },
     );
 }

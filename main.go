@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"mongoTrain/helpers"
 	"net/http"
@@ -10,7 +11,10 @@ var result []helpers.AllPolicies
 
 func admjson(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(helpers.Treegen(result)))
+	_, err := w.Write([]byte(helpers.Treegen(result)))
+	if err != nil {
+		fmt.Println(err)
+	}
 }
 
 func main() {
@@ -34,7 +38,10 @@ func main() {
 	n, err := c.Count()
 	defer session.Close()
 	if n > 0 {
-		c.DropCollection()
+		err := c.DropCollection()
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 	helpers.AllgpToBson(c, result)
 

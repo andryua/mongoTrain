@@ -45,12 +45,12 @@
     <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
         <input class="form-control fas fa-search" id="mySearch" type="text" placeholder="&#xF002;">
     {{range .Rules}}
-        <button class="nav-link text-start" id="v-pills-{{.Name}}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-{{.Name}}" type="button" role="tab" aria-controls="v-pills-{{.Name}}" aria-selected="true">
+        <button class="nav-link text-start" id="v-pills-{{.ID}}-tab" data-bs-toggle="pill" data-bs-target="#v-pills-{{.ID}}" type="button" role="tab" aria-controls="v-pills-{{.ID}}" aria-selected="true">
         {{.DisplayName}}</button>
         <script>
             var gpname = document.getElementById("gpname").innerText;
             var rulegpname = "{{.GpName}}";
-            var lnk = document.getElementById("v-pills-{{.Name}}-tab");
+            var lnk = document.getElementById("v-pills-{{.ID}}-tab");
             if (gpname != rulegpname) {
                 lnk.style = "color: #000000;";
                 lnk.innerText += " (" + rulegpname + ")";
@@ -71,7 +71,7 @@
 </div>
     <div class="tab-content container" id="v-pills-tabContent">
     {{range .Rules}}
-        <div class="tab-pane fade show" id="v-pills-{{.Name}}" role="tabpanel" aria-labelledby="v-pills-{{.Name}}-tab">
+        <div class="tab-pane fade show" id="v-pills-{{.ID}}" role="tabpanel" aria-labelledby="v-pills-{{.ID}}-tab">
         <p><h2>{{.DisplayName}}</h2></p>
         <p>Клас: {{.Class}}</p>
         <p>Розділ: {{.Category}}</p>
@@ -86,7 +86,7 @@
                 {{.ExplainText}}
             </div>
         </div>
-    <form method="POST" id="update-form-{{.Name}}" >
+    <form method="POST" id="update-form-{{.ID}}" >
         <div id="gprules">
         {{range .Values}}
             {{if ne .DisabledValue ""}}
@@ -186,7 +186,7 @@
                     <tbody id="manualFields">
                     <tr id="0">
                         <th scope="row"><input type="text" name="manualValueName" aria-label="ValueName" class="form-control" id="manualvn_text-0" inputmode="text" placeholder="ім'я значення" value="{{.ValueName}}"></th>
-                        <td><input type="text" name="manualValue" aria-label="Value" class="form-control" id="manualv_text-0" inputmode="text" placeholder="значення" value="{{.Value}}" ></td>
+                        <td><input type="text" name="manualValue" aria-label="Value" class="form-control" id="manualv_text-0" inputmode="text" placeholder="значення" value="{{.SelectedValue}}" ></td>
                         <td><input type="text" name="manualDescription" aria-label="Info" class="form-control" id="manuali_text-0" inputmode="text" placeholder="опис" value="{{.Notes}}" ></td>
                         <td><button type="button" class="btn btn-primary add-new" onclick="funcAddManual(this)"><i class="fa fa-plus"></i></button></td>
                     </tr>
@@ -222,18 +222,18 @@
         </div>
         </p>
         <p>
-            <a class="btn btn-success" id="savebtn-{{.Name}}" href="" onclick="funcSaveRule({{.Name}},{{.GpName}},{{.Class}})"><i class="fas fa-save"></i></a>
-            <a class="btn btn-primary" id="copybtn-{{.Name}}" href=""><i class="fas fa-copy"></i></a>
-            <a class="btn btn-danger" id="deletebtn-{{.Name}}" href="/deleterule?name={{.Name}}&gpname={{.GpName}}&class={{.Class}}"><i class="fas fa-trash"></i></a>
-            <p id="res-{{.Name}}"></p>
+            <input id="savebtn-{{.ID}}" class="btn btn-success fas fa-save" type="button" value="&#xf0c7" onclick="funcSaveRule({{.ID}})">
+            <a class="btn btn-primary" id="copybtn-{{.ID}}" href=""><i class="fas fa-copy"></i></a>
+            <a class="btn btn-danger" id="deletebtn-{{.ID}}" href="/deleterule?id={{.ID}}"><i class="fas fa-trash"></i></a>
+            <p id="res-{{.ID}}"></p>
             <script>
                 var gpname = document.getElementById("gpname").innerText;
                 var rulegpname = "{{.GpName}}";
-                var lnk = document.getElementById("v-pills-{{.Name}}");
+                var lnk = document.getElementById("v-pills-{{.ID}}");
                 if (gpname !== rulegpname) {
-                    document.getElementById("deletebtn-{{.Name}}").hidden = true;
-                    document.getElementById("savebtn-{{.Name}}").hidden = true;
-                    $("#v-pills-{{.Name}} :input").prop("disabled", true);
+                    document.getElementById("deletebtn-{{.ID}}").hidden = true;
+                    document.getElementById("savebtn-{{.ID}}").hidden = true;
+                    $("#v-pills-{{.ID}} :input").prop("disabled", true);
                 }
             </script>
         </p>
