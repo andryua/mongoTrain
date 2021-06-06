@@ -146,26 +146,26 @@
                 </script>
             {{end}}
             {{if .Dublicate}}
-                <input hidden id="dublval-{{.Name}}-{{.ID}}" value="{{.Value}}">
-                <input hidden id="dubldn-{{.Name}}-{{.ID}}" value="{{.DisplayName}}">
-                <input hidden id="dublsel-{{.name}}-{{.ID}}" value="{{.SelectedValue}}">
+                <input hidden id="dublval-{{.ValueName}}" value="{{.Value}}">
+                <input hidden id="dubldn-{{.ValueName}}" value="{{.DisplayName}}">
+                <input hidden id="dublsel-{{.ValueName}}" value="{{.SelectedValue}}">
                 <div>
-                <select id="gpvalues-{{.Name}}-{{.ID}}" name="{{.ValueName}}" class="form-select" aria-label="Default select example">
+                <select id="gpvalues-{{.ValueName}}" name="{{.ValueName}}" class="form-select" aria-label="Default select example">
                     <option value="" disabled="" selected="">Виберіть значення</option>
                 </select>
                 </div>
                 <script>
                     $(document).ready(function() {
-                        var vals = $("#dublval-{{.Name}}-{{.ID}}").val().split("|");
-                        var dnames = $("#dubldn-{{.Name}}-{{.ID}}").val().split("|");
-                        var selval = $("#dublsel-{{.Name}}-{{.ID}}").val();
+                        var vals = $("#dublval-{{.ValueName}}").val().split("|");
+                        var dnames = $("#dubldn-{{.ValueName}}").val().split("|");
+                        var selval = $("#dublsel-{{.ValueName}}").val();
                         for (let [i, val] of vals.entries()) {
                             if (val === "") {
                                 val = dnames[i];
                             }
-                            $("#gpvalues-{{.Name}}-{{.ID}}").append(new Option(dnames[i], val));
+                            $("#gpvalues-{{.ValueName}}").append(new Option(dnames[i], val));
                             if (val === selval) {
-                                $("#gpvalues-{{.Name}}-{{.ID}} option[value="+val+"]").prop("selected",true);
+                                $("#gpvalues-{{.ValueName}} option[value="+val+"]").prop("selected",true);
                             }
 
                         }

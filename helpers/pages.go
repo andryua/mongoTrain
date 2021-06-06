@@ -40,9 +40,9 @@ func EditGP(w http.ResponseWriter, r *http.Request) {
 	defer session.Close()
 	c := session.DB("gp").C("gpsel")
 	gpl := session.DB("gp").C("gplist")
-	var sh = []AllPoliciesBson{}
-	var rules = []AllPoliciesBson{}
-	var gplst = ListGP{}
+	var sh []AllPoliciesBson
+	var rules []AllPoliciesBson
+	var gplst ListGP
 	err := gpl.Find(bson.M{"name": name}).One(&gplst)
 	err = c.Find(bson.M{"gpname": name}).All(&sh)
 	if len(gplst.Dependency) > 0 {
@@ -52,7 +52,11 @@ func EditGP(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				fmt.Printf("fail %v\n", err)
 			}
+
 			sh = append(sh, rules...)
+		}
+		if gplst.Type == "users" {
+
 		}
 	}
 	//fmt.Println(sh)

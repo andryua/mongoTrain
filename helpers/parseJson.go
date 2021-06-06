@@ -18,24 +18,22 @@ type AllPolicies struct {
 	Category    string   `json:"category"`
 	SupportedOn string   `json:"supportedOn"`
 	Values      []Values `json:"values"`
-	HasManual   bool     `json:"hasManual"`
 }
 
 type AllPoliciesBson struct {
 	//ID           bson.ObjectId `bson:"_id"`
-	ID           string   `bson:"id"`
-	IDtmp        int      `bson:"IDtmp"`
-	Name         string   `bson:"name"`
-	Class        string   `bson:"class"`
-	DisplayName  string   `bson:"displayName"`
-	ExplainText  string   `bson:"explainText"`
-	Category     string   `bson:"category"`
-	SupportedOn  string   `bson:"supportedOn"`
-	Values       []Values `bson:"values"`
-	GpName       string   `bson:"gpname,omitempty"`
-	GpType       string   `bson:"gptype,omitempty"` // usr, def, sub
-	Dependencies []string `bson:"dependencies,omitempty"`
-	HasManual    bool     `bson:"manual,omitempty"`
+	ID          string   `bson:"id"`
+	IDtmp       int      `bson:"IDtmp"`
+	Name        string   `bson:"name"`
+	Class       string   `bson:"class"`
+	DisplayName string   `bson:"displayName"`
+	ExplainText string   `bson:"explainText"`
+	Category    string   `bson:"category"`
+	SupportedOn string   `bson:"supportedOn"`
+	Values      []Values `bson:"values"`
+	GpName      string   `bson:"gpname,omitempty"`
+	GpType      string   `bson:"gptype,omitempty"` // usr, def, sub
+	//Dependencies []string `bson:"dependencies,omitempty"`
 }
 
 /*type Presentation_json struct {
