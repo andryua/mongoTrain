@@ -86,7 +86,7 @@ func UpdateRule(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 		if len(mVN) > 0 {
-			fmt.Println(mVN)
+			//fmt.Println(mVN)
 			/*	for _, x := range tmp.Values {
 					if x.Manual == true {
 						tmpVals = x
@@ -124,7 +124,7 @@ func UpdateRule(w http.ResponseWriter, r *http.Request) {
 					}
 				}
 			}
-			err = c.Update(bson.M{"id": id}, bson.M{"$pull": bson.M{"values": bson.M{"values.valueName": "manual"}}})
+			err = c.Update(bson.M{"id": id}, bson.M{"$pull": bson.M{"values": bson.M{"valueName": "manual"}}})
 			if err != nil {
 				log.Println(err)
 			}

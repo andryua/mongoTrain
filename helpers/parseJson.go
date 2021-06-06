@@ -34,7 +34,7 @@ type AllPoliciesBson struct {
 	Values       []Values `bson:"values"`
 	GpName       string   `bson:"gpname,omitempty"`
 	GpType       string   `bson:"gptype,omitempty"` // usr, def, sub
-	Dependencies string   `bson:"dependencies,omitempty"`
+	Dependencies []string `bson:"dependencies,omitempty"`
 	HasManual    bool     `bson:"manual,omitempty"`
 }
 

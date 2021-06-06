@@ -61,13 +61,14 @@ function funcSaveRule(id) {
         $("#update-form-" + id).serialize(),
         function(data) {
             if (data == "saved") {
-                $("#res" + name).html("<div class='alert alert-success alert-dismissible fade show' role='alert'>Зміни збережено!<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>");
+                $("#res-" + id).html("<div class='alert alert-success alert-dismissible fade show' role='alert'>Зміни збережено!<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>");
             } else {
-                $("#res" + name).html("<div class='alert alert-danger alert-dismissible fade show' role='alert'>Зміни не збережено!<button type='button' class='close' data-dismiss='alert' aria-label='Close'><span aria-hidden='true'>&times;</span></button></div>");
+                $("#res-" + id).html("<div class='alert alert-danger alert-dismissible fade show' role='alert'>Зміни не збережено!<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button></div>");
             }
         },
     );
 }
+
 
 k=1
 function funcAddManual(btn) {

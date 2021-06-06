@@ -33,7 +33,7 @@
             <i class="fas fa-ellipsis-v"></i>
         </button>
         <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton1">
-            <li><a href="/add?name={{.Gpname}}" class="dropdown-item">Додати правила</a></li>
+            <li><a href="/add?name={{.Gpname}}" class="dropdown-item">Додати правило(а)</a></li>
             <li><button type="button" class="dropdown-item modal1" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Редагувати політику
             </button></li>
@@ -146,26 +146,26 @@
                 </script>
             {{end}}
             {{if .Dublicate}}
-                <input hidden id="dublval-{{.ValueName}}" value="{{.Value}}">
-                <input hidden id="dubldn-{{.ValueName}}" value="{{.DisplayName}}">
-                <input hidden id="dublsel-{{.ValueName}}" value="{{.SelectedValue}}">
+                <input hidden id="dublval-{{.Name}}-{{.ID}}" value="{{.Value}}">
+                <input hidden id="dubldn-{{.Name}}-{{.ID}}" value="{{.DisplayName}}">
+                <input hidden id="dublsel-{{.name}}-{{.ID}}" value="{{.SelectedValue}}">
                 <div>
-                <select id="gpvalues-{{.ValueName}}" name="{{.ValueName}}" class="form-select" aria-label="Default select example">
+                <select id="gpvalues-{{.Name}}-{{.ID}}" name="{{.ValueName}}" class="form-select" aria-label="Default select example">
                     <option value="" disabled="" selected="">Виберіть значення</option>
                 </select>
                 </div>
                 <script>
                     $(document).ready(function() {
-                        var vals = $("#dublval-{{.ValueName}}").val().split("|");
-                        var dnames = $("#dubldn-{{.ValueName}}").val().split("|");
-                        var selval = $("#dublsel-{{.ValueName}}").val();
+                        var vals = $("#dublval-{{.Name}}-{{.ID}}").val().split("|");
+                        var dnames = $("#dubldn-{{.Name}}-{{.ID}}").val().split("|");
+                        var selval = $("#dublsel-{{.Name}}-{{.ID}}").val();
                         for (let [i, val] of vals.entries()) {
                             if (val === "") {
                                 val = dnames[i];
                             }
-                            $("#gpvalues-{{.ValueName}}").append(new Option(dnames[i], val));
+                            $("#gpvalues-{{.Name}}-{{.ID}}").append(new Option(dnames[i], val));
                             if (val === selval) {
-                                $("#gpvalues-{{.ValueName}} option[value="+val+"]").prop("selected",true);
+                                $("#gpvalues-{{.Name}}-{{.ID}} option[value="+val+"]").prop("selected",true);
                             }
 
                         }
@@ -228,8 +228,10 @@
             <p id="res-{{.ID}}"></p>
             <script>
                 var gpname = document.getElementById("gpname").innerText;
+                var cp = document.getElementById("copybtn-{{.ID}}");
                 var rulegpname = "{{.GpName}}";
-                var lnk = document.getElementById("v-pills-{{.ID}}");
+                //var lnk = document.getElementById("v-pills-{{.ID}}");
+                cp.href = "/copy?id={{.ID}}&gpname="+gpname;
                 if (gpname !== rulegpname) {
                     document.getElementById("deletebtn-{{.ID}}").hidden = true;
                     document.getElementById("savebtn-{{.ID}}").hidden = true;

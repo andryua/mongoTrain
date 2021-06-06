@@ -128,34 +128,32 @@ func SendId(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/edit?name="+name, 301)
 }
 
-/*
 func CopyRule(w http.ResponseWriter, r *http.Request) {
 	//зміна не лише ід, але і назви гп і її типу
 	session := ConnectDB()
-	id, err := strconv.Atoi(r.URL.Query().Get("id"))
-	if err != nil {
-		fmt.Printf("atoi fail: %v\n", err)
-	}
+	id := r.URL.Query().Get("id")
 	gpname := r.URL.Query().Get("gpname")
 	gpsel := session.DB("gp").C("gpsel")
+	gplist := session.DB("gp").C("gplist")
 	defer session.Close()
-	cpDoc := AllPoliciesBson{}
-	err = gpsel.Find(bson.M{"id": id, "gpname": gpname}).All(&cpDoc)
+	var cpRule AllPoliciesBson
+	var currGP ListGP
+	err := gpsel.Find(bson.M{"id": id}).One(&cpRule)
+	err = gplist.Find(bson.M{"name": gpname}).One(&currGP)
 	if err != nil {
 		fmt.Printf("find fail: %v\n", err)
 	}
-	if gpname != "" {
-		cpDoc.GpName = gpname
-		if cpDoc.ID == -1 {
-			cpDoc.ID--
-		} else {
-			cpDoc.ID = -1
-		}
-		err = gpsel.Insert(cpDoc)
-		if err != nil {
-			fmt.Printf("insert fail: %v\n", err)
-		}
-		http.Redirect(w, r, "/edit?name="+gpname, 301)
+	cpRule.GpName = gpname
+	cpRule.GpType = currGP.Type
+	cpRule.ID = bson.NewObjectId().Hex()
+	cpRule.Dependencies = currGP.Dependency
+	for _, val := range cpRule.Values {
+		val.SelectedValue = ""
+		val.Notes = ""
 	}
+	err = gpsel.Insert(cpRule)
+	if err != nil {
+		fmt.Printf("copy rule fail: %v\n", err)
+	}
+	http.Redirect(w, r, "/edit?name="+gpname, 301)
 }
-*/
