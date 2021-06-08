@@ -146,7 +146,7 @@ func CopyRule(w http.ResponseWriter, r *http.Request) {
 	cpRule.GpName = gpname
 	cpRule.GpType = currGP.Type
 	cpRule.ID = bson.NewObjectId().Hex()
-	cpRule.Dependencies = currGP.Dependency
+	//cpRule.Dependencies = currGP.Dependency
 	for _, val := range cpRule.Values {
 		val.SelectedValue = ""
 		val.Notes = ""

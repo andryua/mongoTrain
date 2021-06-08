@@ -69,7 +69,7 @@
         </script>
     </div>
 </div>
-    <div class="tab-content container" id="v-pills-tabContent">
+    <div class="tab-content container-sm" id="v-pills-tabContent">
     {{range .Rules}}
         <div class="tab-pane fade show" id="v-pills-{{.ID}}" role="tabpanel" aria-labelledby="v-pills-{{.ID}}-tab">
         <p><h2>{{.DisplayName}}</h2></p>
@@ -87,26 +87,28 @@
             </div>
         </div>
     <form method="POST" id="update-form-{{.ID}}" >
-        <div id="gprules">
-        {{range .Values}}
+        <div id="gprules" >
+            {{if .HasManual}}
+            <div class="row manualValues" id="hasmanual-{{.ID}}">
+            {{range .Values}}
             {{if ne .DisabledValue ""}}
-                <input hidden id="selvalue-ENDI-{{.ValueName}}" value="{{.SelectedValue}}">
-                <div class="form-check">
-                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.EnabledValue}}" id="enabled-{{.ValueName}}">
-                <label class="form-check-label" for="enabled-{{.ValueName}}">
+            <input hidden id="selvalue-ENDI-{{.ValueName}}-{{.ParentID}}" value="{{.SelectedValue}}">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.EnabledValue}}" id="enabled-{{.ValueName}}-{{.ParentID}}">
+                <label class="form-check-label" for="enabled-{{.ValueName}}-{{.ParentID}}">
                     Enabled
                 </label>
-                </div>
-                <div class="form-check">
-                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.DisabledValue}}" id="disabled-{{.ValueName}}">
-                <label class="form-check-label" for="disabled-{{.ValueName}}">
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.DisabledValue}}" id="disabled-{{.ValueName}}-{{.ParentID}}">
+                <label class="form-check-label" for="disabled-{{.ValueName}}-{{.ParentID}}">
                     Disabled
                 </label>
-                </div>
-                <script>
-                var sel = document.getElementById("selvalue-ENDI-{{.ValueName}}").value;
-                var en = document.getElementById("enabled-{{.ValueName}}");
-                var di = document.getElementById("disabled-{{.ValueName}}");
+            </div>
+            <script>
+                var sel = document.getElementById("selvalue-ENDI-{{.ValueName}}-{{.ParentID}}").value;
+                var en = document.getElementById("enabled-{{.ValueName}}-{{.ParentID}}");
+                var di = document.getElementById("disabled-{{.ValueName}}-{{.ParentID}}");
                 if (sel === en.value) {
                     en.checked = true;
                     di.checked = false;
@@ -115,26 +117,26 @@
                     di.checked = true;
                     en.checked = false;
                 }
-                </script>
+            </script>
             {{end}}
             {{if ne .TrueValue ""}}
-                <input hidden id="selvalue-TRFL-{{.ValueName}}" value="{{.SelectedValue}}">
-                <div class="form-check">
-                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.TrueValue}}" id="true-{{.ValueName}}">
-                <label class="form-check-label" for="true-{{.ValueName}}">
+            <input hidden id="selvalue-TRFL-{{.ValueName}}-{{.ParentID}}" value="{{.SelectedValue}}">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.TrueValue}}" id="true-{{.ValueName}}-{{.ParentID}}">
+                <label class="form-check-label" for="true-{{.ValueName}}-{{.ParentID}}">
                     True
                 </label>
-                </div>
-                <div class="form-check">
-                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.FalseValue}}" id="false-{{.ValueName}}">
-                <label class="form-check-label" for="false-{{.ValueName}}">
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.FalseValue}}" id="false-{{.ValueName}}-{{.ParentID}}">
+                <label class="form-check-label" for="false-{{.ValueName}}-{{.ParentID}}">
                     False
                 </label>
-                </div>
-                <script>
-                var sel = document.getElementById("selvalue-TRFL-{{.ValueName}}").value;
-                var en = document.getElementById("true-{{.ValueName}}");
-                var di = document.getElementById("false-{{.ValueName}}");
+            </div>
+            <script>
+                var sel = document.getElementById("selvalue-TRFL-{{.ValueName}}-{{.ParentID}}").value;
+                var en = document.getElementById("true-{{.ValueName}}-{{.ParentID}}");
+                var di = document.getElementById("false-{{.ValueName}}-{{.ParentID}}");
                 if (sel === en.value) {
                     en.checked = true;
                     di.checked = false;
@@ -143,83 +145,200 @@
                     di.checked = true;
                     en.checked = false;
                 }
-                </script>
+            </script>
             {{end}}
             {{if .Dublicate}}
-                <input hidden id="dublval-{{.ValueName}}" value="{{.Value}}">
-                <input hidden id="dubldn-{{.ValueName}}" value="{{.DisplayName}}">
-                <input hidden id="dublsel-{{.ValueName}}" value="{{.SelectedValue}}">
-                <div>
-                <select id="gpvalues-{{.ValueName}}" name="{{.ValueName}}" class="form-select" aria-label="Default select example">
+            <input hidden id="dublval-{{.ValueName}}-{{.ParentID}}" value="{{.Value}}">
+            <input hidden id="dubldn-{{.ValueName}}-{{.ParentID}}" value="{{.DisplayName}}">
+            <input hidden id="dublsel-{{.ValueName}}-{{.ParentID}}" value="{{.SelectedValue}}">
+            <div class="col-5">
+                <select id="gpvalues-{{.ValueName}}-{{.ParentID}}" name="{{.ValueName}}" class="form-select" aria-label="Default select example">
                     <option value="" disabled="" selected="">Виберіть значення</option>
                 </select>
-                </div>
-                <script>
-                    $(document).ready(function() {
-                        var vals = $("#dublval-{{.ValueName}}").val().split("|");
-                        var dnames = $("#dubldn-{{.ValueName}}").val().split("|");
-                        var selval = $("#dublsel-{{.ValueName}}").val();
-                        for (let [i, val] of vals.entries()) {
-                            if (val === "") {
-                                val = dnames[i];
-                            }
-                            $("#gpvalues-{{.ValueName}}").append(new Option(dnames[i], val));
-                            if (val === selval) {
-                                $("#gpvalues-{{.ValueName}} option[value="+val+"]").prop("selected",true);
-                            }
-
+            </div>
+            <!--    <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="Check-{{.ParentID}}">
+                    <label class="form-check-label" for="Check-{{.ParentID}}">
+                        видалити значення?
+                    </label>
+                </div> -->
+            <script>
+                $(document).ready(function() {
+                    //var delVal = $("#Check-{{.ParentID}}");
+                    var vals = $("#dublval-{{.ValueName}}-{{.ParentID}}").val().split("|");
+                    var dnames = $("#dubldn-{{.ValueName}}-{{.ParentID}}").val().split("|");
+                    var selval = $("#dublsel-{{.ValueName}}-{{.ParentID}}").val();
+                    //if (delVal.checked == true) {
+                    //    $("#gpvalues-{{.ValueName}}-{{.ParentID}}").prop("disabled",true);
+                    //$("#gpvalues-{{.ValueName}}-{{.ParentID}}").value = "DELETE";
+                    //}
+                    for (let [i, val] of vals.entries()) {
+                        if (val === "") {
+                            val = dnames[i];
                         }
-                    })
-                </script>
+                        $("#gpvalues-{{.ValueName}}-{{.ParentID}}").append(new Option(dnames[i], val));
+                        if (val === selval) {
+                            $("#gpvalues-{{.ValueName}}-{{.ParentID}} option[value="+val+"]").prop("selected",true);
+                        }
+
+                    }
+                })
+            </script>
             {{ else }}
-                <p id="dname">{{.DisplayName}}</p>
-                {{if .Manual}}
-                    <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th scope="col">Ім'я значення</th>
-                        <th scope="col">Значення</th>
-                        <th scope="col">Опис</th>
-                        <th scope="col"></th>
-                    </tr>
-                    </thead>
-                    <tbody id="manualFields">
-                    <tr id="0">
-                        <th scope="row"><input type="text" name="manualValueName" aria-label="ValueName" class="form-control" id="manualvn_text-0" inputmode="text" placeholder="ім'я значення" value="{{.ValueName}}"></th>
-                        <td><input type="text" name="manualValue" aria-label="Value" class="form-control" id="manualv_text-0" inputmode="text" placeholder="значення" value="{{.SelectedValue}}" ></td>
-                        <td><input type="text" name="manualDescription" aria-label="Info" class="form-control" id="manuali_text-0" inputmode="text" placeholder="опис" value="{{.Notes}}" ></td>
-                        <td><button type="button" class="btn btn-primary add-new" onclick="funcAddManual(this)"><i class="fa fa-plus"></i></button></td>
-                    </tr>
-                    </tbody>
-                    </table>
-                {{else}}
-                    {{if eq .Type "REG_SZ"}}
-                        <input type="text" id="{{.ValueName}}_text" name="{{.ValueName}}" inputmode="text" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
-                    {{end}}
-                    {{if and (eq .Type "REG_DWORD") (eq .DisabledValue "") (eq .TrueValue "")}}
-                        <input type="text" id="{{.ValueName}}_number" name="{{.ValueName}}" inputmode="numeric" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
-                    {{end}}
-                    {{if eq .Type "REG_MULTISZ"}}
-                        <textarea rows = "5" cols = "60" name="{{.ValueName}}" id="{{.ValueName}}_multiline" placeholder="{{.ValueName}}">
+            {{if .Manual}}
+                <div class="col-sm-4"><input type="text" name="manualValueName" aria-label="ValueName" class="form-control" id="manualvn_text-0" inputmode="text" placeholder="ім'я значення" value="{{.ValueName}}"></div>
+                <div class="col-sm-4"><input type="text" name="manualValue" aria-label="Value" class="form-control" id="manualv_text-0" inputmode="text" placeholder="значення" value="{{.SelectedValue}}" ></div>
+                <div class="col-sm-3"><input type="text" name="manualDescription" aria-label="Info" class="form-control" id="manuali_text-0" inputmode="text" placeholder="опис" value="{{.Notes}}" ></div>
+            {{else}}
+                <p></p>
+            <div class="col-5">
+                {{if eq .Type "REG_SZ"}}
+                <input type="text" class="form-control" id="{{.ValueName}}_text-{{.ParentID}}" name="{{.ValueName}}" inputmode="text" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
+                {{end}}
+                {{if and (eq .Type "REG_DWORD") (eq .DisabledValue "") (eq .TrueValue "")}}
+                <input type="text" class="form-control" id="{{.ValueName}}_number-{{.ParentID}}" name="{{.ValueName}}" inputmode="numeric" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
+                {{end}}
+                {{if eq .Type "REG_MULTISZ"}}
+                <textarea rows = "5" cols = "60" class="form-control" name="{{.ValueName}}" id="{{.ValueName}}_multiline-{{.ParentID}}" placeholder="{{.ValueName}}">
                             {{.SelectedValue}}
                         </textarea>
-                    {{end}}
-                    {{if eq .Type "REG_QWORD"}}
-                        <input type="text" id="{{.ValueName}}_bin" name="{{.ValueName}}" inputmode="text" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
-                    {{end}}
                 {{end}}
+                {{if eq .Type "REG_QWORD"}}
+                <input type="number" class="form-control" id="{{.ValueName}}_bin-{{.ParentID}}" name="{{.ValueName}}" inputmode="text" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
+                {{end}}
+            </div>
+            {{end}}
+            {{end}}
+            {{end}}
+            </div>
+            <div id="manBtn-{{.ID}}" class="col-sm-1"><button type="button" class="btn btn-primary add-new" onclick="funcAddManual(this,{{.ID}})"><i class="fa fa-plus"></i></button></div>
+            {{else}}
+            {{range .Values}}
+            {{if ne .DisabledValue ""}}
+            <input hidden id="selvalue-ENDI-{{.ValueName}}-{{.ParentID}}" value="{{.SelectedValue}}">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.EnabledValue}}" id="enabled-{{.ValueName}}-{{.ParentID}}">
+                <label class="form-check-label" for="enabled-{{.ValueName}}-{{.ParentID}}">
+                    Enabled
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.DisabledValue}}" id="disabled-{{.ValueName}}-{{.ParentID}}">
+                <label class="form-check-label" for="disabled-{{.ValueName}}-{{.ParentID}}">
+                    Disabled
+                </label>
+            </div>
+            <script>
+                var sel = document.getElementById("selvalue-ENDI-{{.ValueName}}-{{.ParentID}}").value;
+                var en = document.getElementById("enabled-{{.ValueName}}-{{.ParentID}}");
+                var di = document.getElementById("disabled-{{.ValueName}}-{{.ParentID}}");
+                if (sel === en.value) {
+                    en.checked = true;
+                    di.checked = false;
+                }
+                if (sel === di.value) {
+                    di.checked = true;
+                    en.checked = false;
+                }
+            </script>
+            {{end}}
+            {{if ne .TrueValue ""}}
+            <input hidden id="selvalue-TRFL-{{.ValueName}}-{{.ParentID}}" value="{{.SelectedValue}}">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.TrueValue}}" id="true-{{.ValueName}}-{{.ParentID}}">
+                <label class="form-check-label" for="true-{{.ValueName}}-{{.ParentID}}">
+                    True
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="{{.ValueName}}" value="{{.FalseValue}}" id="false-{{.ValueName}}-{{.ParentID}}">
+                <label class="form-check-label" for="false-{{.ValueName}}-{{.ParentID}}">
+                    False
+                </label>
+            </div>
+            <script>
+                var sel = document.getElementById("selvalue-TRFL-{{.ValueName}}-{{.ParentID}}").value;
+                var en = document.getElementById("true-{{.ValueName}}-{{.ParentID}}");
+                var di = document.getElementById("false-{{.ValueName}}-{{.ParentID}}");
+                if (sel === en.value) {
+                    en.checked = true;
+                    di.checked = false;
+                }
+                if (sel === di.value) {
+                    di.checked = true;
+                    en.checked = false;
+                }
+            </script>
+            {{end}}
+            {{if .Dublicate}}
+            <input hidden id="dublval-{{.ValueName}}-{{.ParentID}}" value="{{.Value}}">
+            <input hidden id="dubldn-{{.ValueName}}-{{.ParentID}}" value="{{.DisplayName}}">
+            <input hidden id="dublsel-{{.ValueName}}-{{.ParentID}}" value="{{.SelectedValue}}">
+            <div class="col-5">
+                <select id="gpvalues-{{.ValueName}}-{{.ParentID}}" name="{{.ValueName}}" class="form-select" aria-label="Default select example">
+                    <option value="" disabled="" selected="">Виберіть значення</option>
+                </select>
+            </div>
+            <!--    <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="Check-{{.ParentID}}">
+                    <label class="form-check-label" for="Check-{{.ParentID}}">
+                        видалити значення?
+                    </label>
+                </div> -->
+            <script>
+                $(document).ready(function() {
+                    //var delVal = $("#Check-{{.ParentID}}");
+                    var vals = $("#dublval-{{.ValueName}}-{{.ParentID}}").val().split("|");
+                    var dnames = $("#dubldn-{{.ValueName}}-{{.ParentID}}").val().split("|");
+                    var selval = $("#dublsel-{{.ValueName}}-{{.ParentID}}").val();
+                    //if (delVal.checked == true) {
+                    //    $("#gpvalues-{{.ValueName}}-{{.ParentID}}").prop("disabled",true);
+                    //$("#gpvalues-{{.ValueName}}-{{.ParentID}}").value = "DELETE";
+                    //}
+                    for (let [i, val] of vals.entries()) {
+                        if (val === "") {
+                            val = dnames[i];
+                        }
+                        $("#gpvalues-{{.ValueName}}-{{.ParentID}}").append(new Option(dnames[i], val));
+                        if (val === selval) {
+                            $("#gpvalues-{{.ValueName}}-{{.ParentID}} option[value="+val+"]").prop("selected",true);
+                        }
+
+                    }
+                })
+            </script>
+            {{ else }}
+            <p id="dname">{{.DisplayName}}</p>
+            <div class="col-5">
+                {{if eq .Type "REG_SZ"}}
+                <input type="text" class="form-control" id="{{.ValueName}}_text-{{.ParentID}}" name="{{.ValueName}}" inputmode="text" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
+                {{end}}
+                {{if and (eq .Type "REG_DWORD") (eq .DisabledValue "") (eq .TrueValue "")}}
+                <input type="text" class="form-control" id="{{.ValueName}}_number-{{.ParentID}}" name="{{.ValueName}}" inputmode="numeric" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
+                {{end}}
+                {{if eq .Type "REG_MULTISZ"}}
+                <textarea rows = "5" cols = "60" class="form-control" name="{{.ValueName}}" id="{{.ValueName}}_multiline-{{.ParentID}}" placeholder="{{.ValueName}}">
+                            {{.SelectedValue}}
+                        </textarea>
+                {{end}}
+                {{if eq .Type "REG_QWORD"}}
+                <input type="number" class="form-control" id="{{.ValueName}}_bin-{{.ParentID}}" name="{{.ValueName}}" inputmode="text" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
+                {{end}}
+            </div>
             {{end}}
             <p></p>
-        {{end}}
+            {{end}}
+            {{end}}
+
         </div>
         <p>
         <hr>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="DELETE" id="flexCheckAll">
-            <label class="form-check-label" for="flexCheckAll">
+<!--        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="DELETE" id="flexCheckAll-{{.ID}}">
+            <label class="form-check-label" for="flexCheckAll-{{.ID}}">
                 видалити значення?
             </label>
-        </div>
+        </div> -->
         </p>
         <p>
             <input id="savebtn-{{.ID}}" class="btn btn-success fas fa-save" type="button" value="&#xf0c7" onclick="funcSaveRule({{.ID}})">
@@ -227,6 +346,7 @@
             <a class="btn btn-danger" id="deletebtn-{{.ID}}" href="/deleterule?id={{.ID}}"><i class="fas fa-trash"></i></a>
             <p id="res-{{.ID}}"></p>
             <script>
+//                var delAll = document.getElementById("flexCheckAll-{{.ID}}")
                 var gpname = document.getElementById("gpname").innerText;
                 var cp = document.getElementById("copybtn-{{.ID}}");
                 var rulegpname = "{{.GpName}}";
@@ -270,6 +390,8 @@
     $("select").on( "change", showValues );
     showValues();
      */
+    var manual = document.getElementsByClassName("manualValues");
+    console.log(manual);
 </script>
 
 </body>

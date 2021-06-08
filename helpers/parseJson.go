@@ -34,6 +34,7 @@ type AllPoliciesBson struct {
 	GpName      string   `bson:"gpname,omitempty"`
 	GpType      string   `bson:"gptype,omitempty"` // usr, def, sub
 	//Dependencies []string `bson:"dependencies,omitempty"`
+	HasManual bool `bson:"hasmanual,omitempty"`
 }
 
 /*type Presentation_json struct {
@@ -87,6 +88,7 @@ type AllPoliciesBson struct {
 }*/
 
 type Values struct {
+	ParentID      string `json:"parentID,omitempty" bson:"parentID,omitempty"`
 	Type          string `json:"type,omitempty" bson:"type,omitempty"`
 	ValueName     string `json:"valueName,omitempty" bson:"valueName,omitempty"`
 	DisplayName   string `json:"displayName,omitempty" bson:"displayName,omitempty"`
@@ -131,7 +133,17 @@ func AllgpToBson(c *mgo.Collection, result []AllPolicies) {
 		r.ExplainText = pol.ExplainText
 		r.Values = pol.Values
 		r.Name = pol.Name
+		r.HasManual = false
 
+		for i := 0; i < len(r.Values); i++ {
+			r.Values[i].ParentID = r.ID
+		}
+		for i := 0; i < len(r.Values); i++ {
+			if r.Values[i].Manual {
+				r.HasManual = true
+				break
+			}
+		}
 		err := c.Insert(&r)
 		if err != nil {
 			log.Println(err)

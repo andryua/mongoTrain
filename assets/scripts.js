@@ -71,16 +71,16 @@ function funcSaveRule(id) {
 
 
 k=1
-function funcAddManual(btn) {
-    var div = document.getElementById("manualFields");
-    btn.hidden = true;
+function funcAddManual(btn,id) {
+    //console.log($(btn).parents());
+    //var parentDiv = $(btn).parents()[1];
+    //var id = btn.id.split("-")[1];
+    var manual = document.getElementById("hasmanual-"+id);
+    //btn.hidden = true;
     //document.getElementById("manualvn_text-"+k).value = document.getElementById("manualvn_text-"+k).textContent;
     k++;
-    div.innerHTML += '<tr id="' + k + '">\n' +
-        '            <th scope="row"><input type="text" name="manualValueName" aria-label="ValueName" class="form-control" id="manualvn_text' + k + ' inputmode="text" placeholder="Ім\'я значення"></th>\n' +
-        '            <td><input type="text" name="manualValue" aria-label="Value" class="form-control" id="manualv_text' + k + ' " inputmode="text" placeholder="Значення"></td>\n' +
-        '            <td><input type="text" name="manualDescription" aria-label="Info" class="form-control" id="manuali_text' + k + ' " inputmode="text" placeholder="Опис"></td>\n' +
-        '            <td><button type="button" class="btn btn-primary add-new" onclick="funcAddManual(this)"><i class="fa fa-plus"></i></button></td>\n' +
-        '            </tr>'
-    //$("#"+(k-1)).find("input").attr("readonly", true);
+    manual.innerHTML += "<div class=\"col-sm-4\"><input type=\"text\" name=\"manualValueName\" aria-label=\"ValueName\" class=\"form-control\" id=\"manualvn_text-" + k +"\" inputmode=\"text\" placeholder=\"ім'я значення\"></div>\n" +
+        "                    <div class=\"col-sm-4\"><input type=\"text\" name=\"manualValue\" aria-label=\"Value\" class=\"form-control\" id=\"manualv_text-"+ k+"\" inputmode=\"text\" placeholder=\"значення\"></div>\n" +
+        "                    <div class=\"col-sm-3\"><input type=\"text\" name=\"manualDescription\" aria-label=\"Info\" class=\"form-control\" id=\"manuali_text-"+k+"\" inputmode=\"text\" placeholder=\"опис\"></div>\n"
+    //$($(btn).parents()[0]).find("input").attr("readonly", true);
 }
