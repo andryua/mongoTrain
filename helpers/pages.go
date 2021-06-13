@@ -14,23 +14,15 @@ func GPList(w http.ResponseWriter, r *http.Request) {
 	var lstgp = []ListGP{}
 	c := session.DB("gp").C("gplist")
 	defer session.Close()
-	n, err := c.Count()
+	err := c.Find(bson.M{}).All(&lstgp)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if n < 1 {
-		http.Redirect(w, r, "/addgp", 301)
-	} else {
-		err := c.Find(bson.M{}).All(&lstgp)
-		if err != nil {
-			log.Fatal(err)
-		}
-		//fmt.Println(lstgp)
-		t := template.Must(template.ParseFiles("./templates/index.html"))
-		var v = make(map[string]interface{})
-		v["GPList"] = lstgp
-		t.ExecuteTemplate(w, "index", v)
-	}
+	//fmt.Println(lstgp)
+	t := template.Must(template.ParseFiles("./templates/index.html"))
+	var v = make(map[string]interface{})
+	v["GPList"] = lstgp
+	t.ExecuteTemplate(w, "index", v)
 }
 
 func EditGP(w http.ResponseWriter, r *http.Request) {

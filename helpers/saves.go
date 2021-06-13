@@ -118,7 +118,7 @@ func DownloadGP(w http.ResponseWriter, r *http.Request) {
 	}
 	j = RemoveDuplicateStr(j)
 	for _, data := range selectedGP {
-		if !Contains(j, data.ID) {
+		if !Contains(j, data.ID) && (data.GpType == "users" || data.GpType == "default") {
 			gpNew = append(gpNew, data)
 		}
 	}
