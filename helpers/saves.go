@@ -44,29 +44,85 @@ func AddGP(w http.ResponseWriter, r *http.Request) {
 func DownloadGP(w http.ResponseWriter, r *http.Request) {
 	session := ConnectDB()
 	name := r.URL.Query().Get("name")
-	c := session.DB("gp").C("gpsel")
-	gpl := session.DB("gp").C("gplist")
+	selectGP := session.DB("gp").C("gpsel")
+	gpList := session.DB("gp").C("gplist")
 	defer session.Close()
-	var gplst []AllPoliciesBson
-	var gpdep []AllPoliciesBson
-	gpls := ListGP{}
+	var selectedGP []AllPoliciesBson
+	var dependenciesGP []AllPoliciesBson
+	var additionalSelectedGP []AllPoliciesBson
+	var gpNew []AllPoliciesBson
+	var additionalGP ListGP
+	var currentGP ListGP
+	var j []string
+	var gpname_ID = make(map[string]string)
 	s := ""
-	err := gpl.Find(bson.M{"name": name}).One(&gpls)
-	err = c.Find(bson.M{"gpname": name}).All(&gplst)
+	err := gpList.Find(bson.M{"name": name}).One(&currentGP)
+	err = selectGP.Find(bson.M{"gpname": name}).All(&selectedGP)
 	if err != nil {
 		fmt.Printf("fail %v\n", err)
 	}
-	if len(gpls.Dependency) > 0 {
-		for _, dependence := range gpls.Dependency {
-			gpdep = nil
-			err = c.Find(bson.M{"gpname": dependence}).All(&gpdep)
-			if err != nil {
-				fmt.Printf("fail %v\n", err)
+	switch currentGP.Type {
+	case "default":
+		if len(currentGP.Dependency) > 0 {
+			for _, dependence := range currentGP.Dependency {
+				dependenciesGP = nil
+				err = selectGP.Find(bson.M{"gpname": dependence}).All(&dependenciesGP)
+				if err != nil {
+					fmt.Printf("fail %v\n", err)
+				}
+				selectedGP = append(selectedGP, dependenciesGP...)
 			}
-			gplst = append(gplst, gpdep...)
+		} else {
+			gpNew = selectedGP
+		}
+	case "users":
+		if len(currentGP.Dependency) > 0 {
+			for _, dependence := range currentGP.Dependency {
+				dependenciesGP = nil
+				err = selectGP.Find(bson.M{"gpname": dependence}).All(&dependenciesGP)
+				if err != nil {
+					fmt.Printf("fail %v\n", err)
+				}
+				selectedGP = append(selectedGP, dependenciesGP...)
+				err := gpList.Find(bson.M{"name": dependence}).One(&additionalGP)
+				if len(additionalGP.Dependency) > 0 {
+					for _, depend := range additionalGP.Dependency {
+						dependenciesGP = nil
+						err = selectGP.Find(bson.M{"gpname": depend}).All(&additionalSelectedGP)
+						if err != nil {
+							fmt.Printf("fail %v\n", err)
+						}
+						selectedGP = append(selectedGP, additionalSelectedGP...)
+					}
+				}
+			}
+		} else {
+			gpNew = selectedGP
+		}
+	case "main":
+		gpNew = selectedGP
+	}
+
+	for _, data := range selectedGP {
+		if data.GpName == name {
+			gpname_ID[data.Name] = data.Class
 		}
 	}
-	for _, data := range gplst {
+
+	for key, value := range gpname_ID {
+		for _, data := range selectedGP {
+			if data.GpName != name && data.Name == key && data.Class == value {
+				j = append(j, data.ID)
+			}
+		}
+	}
+	j = RemoveDuplicateStr(j)
+	for _, data := range selectedGP {
+		if !Contains(j, data.ID) {
+			gpNew = append(gpNew, data)
+		}
+	}
+	for _, data := range gpNew {
 		scope := ""
 		if strings.ToLower(data.Class) == "machine" {
 			scope = "Computer"
