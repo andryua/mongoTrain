@@ -133,6 +133,7 @@ func DownloadGP(w http.ResponseWriter, r *http.Request) {
 			if val.SelectedValue == "" {
 				val.SelectedValue = "none"
 			}
+			fmt.Println(val.SelectedValue)
 			s += scope + "\n" + val.Key + "\n" + val.ValueName + "\n" + val.Type + ":" + val.SelectedValue + "\n\n"
 		}
 	}

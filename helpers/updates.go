@@ -66,6 +66,13 @@ func UpdateRule(w http.ResponseWriter, r *http.Request) {
 				if (val.ValueName == key) && (val.Manual != true) {
 					val.SelectedValue = strings.Join(value, "|")
 					//fmt.Println(key, "\t", val.SelectedValue)
+					if strings.Contains(val.SelectedValue, "\n") {
+						fmt.Println(val.SelectedValue)
+						val.SelectedValue = strings.Replace(val.SelectedValue, "\n", `\0`, -1)
+					}
+					if strings.Contains(val.SelectedValue, "\r") {
+						val.SelectedValue = strings.Replace(val.SelectedValue, "\r", "", -1)
+					}
 					err := c.Update(bson.M{"id": id, "values.valueName": key}, bson.M{"$set": bson.M{"values.$.selectedvalue": val.SelectedValue}})
 					if err != nil {
 						log.Println(err)

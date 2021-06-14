@@ -199,9 +199,7 @@
                 <input type="text" class="form-control" id="{{.ValueName}}_number-{{.ParentID}}" name="{{.ValueName}}" inputmode="numeric" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
                 {{end}}
                 {{if eq .Type "REG_MULTISZ"}}
-                <textarea rows = "5" cols = "60" class="form-control" name="{{.ValueName}}" id="{{.ValueName}}_multiline-{{.ParentID}}" placeholder="{{.ValueName}}">
-                            {{.SelectedValue}}
-                        </textarea>
+                <textarea rows = "5" cols = "60" class="form-control" name="{{.ValueName}}" id="{{.ValueName}}_multiline-{{.ParentID}}" placeholder="{{.ValueName}}">{{.SelectedValue}}</textarea>
                 {{end}}
                 {{if eq .Type "REG_QWORD"}}
                 <input type="number" class="form-control" id="{{.ValueName}}_bin-{{.ParentID}}" name="{{.ValueName}}" inputmode="text" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
@@ -317,9 +315,7 @@
                 <input type="text" class="form-control" id="{{.ValueName}}_number-{{.ParentID}}" name="{{.ValueName}}" inputmode="numeric" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
                 {{end}}
                 {{if eq .Type "REG_MULTISZ"}}
-                <textarea rows = "5" cols = "60" class="form-control" name="{{.ValueName}}" id="{{.ValueName}}_multiline-{{.ParentID}}" placeholder="{{.ValueName}}">
-                            {{.SelectedValue}}
-                        </textarea>
+                <textarea rows = "5" cols = "60" class="form-control" name="{{.ValueName}}" id="{{.ValueName}}_multiline-{{.ParentID}}" placeholder="{{.ValueName}}">{{.SelectedValue}}</textarea>
                 {{end}}
                 {{if eq .Type "REG_QWORD"}}
                 <input type="number" class="form-control" id="{{.ValueName}}_bin-{{.ParentID}}" name="{{.ValueName}}" inputmode="text" placeholder="{{.ValueName}}" value="{{.SelectedValue}}">
